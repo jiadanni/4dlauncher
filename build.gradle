@@ -6,7 +6,7 @@ buildscript {
     ext {
         version_gradle_tools = "8.3.0"
         version_plugin_kotlin = "1.9.22"
-        enable_plugin_kotlin = false
+        enable_plugin_kotlin = true
 
         version_compileSdk = 36
         version_buildTools = "35.0.0"
