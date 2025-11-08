@@ -1,12 +1,12 @@
 package com.benny.openlauncher.activity;
 
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SwitchCompat;
-import android.support.v7.widget.Toolbar;
-import android.support.v7.widget.helper.ItemTouchHelper;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.widget.LinearLayoutManager;
+import androidx.appcompat.widget.RecyclerView;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
+import androidx.appcompat.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
