@@ -75,6 +75,8 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
     public static final Companion Companion = new Companion();
     public static final int REQUEST_CREATE_APPWIDGET = 0x6475;
     public static final int REQUEST_PERMISSION_STORAGE = 0x3648;
+    public static final int REQUEST_PERMISSION_POST_NOTIFICATIONS = 0x3649;
+    public static final int REQUEST_PERMISSION_READ_MEDIA = 0x3650;
     public static final int REQUEST_PICK_APPWIDGET = 0x2678;
     public static WidgetHost _appWidgetHost;
     public static AppWidgetManager _appWidgetManager;

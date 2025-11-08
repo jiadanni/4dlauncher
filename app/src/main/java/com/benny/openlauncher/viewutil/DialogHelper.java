@@ -22,7 +22,7 @@ import com.benny.openlauncher.util.AppManager;
 import com.benny.openlauncher.util.AppSettings;
 import com.benny.openlauncher.util.Tool;
 import com.mikepenz.fastadapter.IAdapter;
-import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+import com.mikepenz.fastadapter.adapters.FastItemAdapter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -104,15 +104,12 @@ public class DialogHelper {
                     .withIconPadding(8));
         }
         fastItemAdapter.set(items);
-        fastItemAdapter.withOnClickListener(new com.mikepenz.fastadapter.listeners.OnClickListener<IconLabelItem>() {
-            @Override
-            public boolean onClick(View v, IAdapter<IconLabelItem> adapter, IconLabelItem item, int position) {
-                if (onAppSelectedListener != null) {
-                    onAppSelectedListener.onAppSelected(apps.get(position));
-                }
-                dialog.dismiss();
-                return true;
+        fastItemAdapter.setOnClickListener((v, adapter, item, position) -> {
+            if (onAppSelectedListener != null) {
+                onAppSelectedListener.onAppSelected(apps.get(position));
             }
+            dialog.dismiss();
+            return true;
         });
         dialog.show();
     }
