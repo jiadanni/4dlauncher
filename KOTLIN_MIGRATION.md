@@ -8,15 +8,18 @@ This project is being migrated from Java to Kotlin. Kotlin support has been enab
 - Kotlin plugin enabled in build.gradle
 - Kotlin standard library added (1.9.22)
 - AndroidX Core KTX added (1.12.0)
-- First utility class converted: `PermissionChecker.kt`
+- **4 files converted to Kotlin:**
+  - `PermissionChecker.kt` - Permission handling utility
+  - `DialogHelper.kt` - Dialog creation utilities
+  - `Tool.kt` - General utility functions (20+ methods)
+  - `App.kt` - App model (Kotlin data class with backward compatibility)
 
 📝 **Remaining:**
-- 50+ Java files to convert
+- 48+ Java files to convert
 - Activity classes
 - Fragment classes
 - Widget classes
-- Utility classes
-- View classes
+- Other utility and model classes
 
 ## Benefits of Kotlin
 
