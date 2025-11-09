@@ -19,10 +19,12 @@ import com.benny.openlauncher.util.Definitions.ItemState
 import com.benny.openlauncher.util.Definitions.WallpaperScroll
 import com.benny.openlauncher.util.DragAction.Action
 import com.benny.openlauncher.util.DragHandler
+import com.benny.openlauncher.util.LauncherAction
 import com.benny.openlauncher.util.Tool
 import com.benny.openlauncher.viewutil.DesktopCallback
 import com.benny.openlauncher.viewutil.DesktopGestureListener
 import com.benny.openlauncher.viewutil.ItemViewFactory
+import com.benny.openlauncher.viewutil.MultiTouchGestureDetector
 import com.benny.openlauncher.widget.CellContainer.DragState
 import in.championswimmer.sfg.lib.SimpleFingerGestures
 
@@ -45,9 +47,55 @@ class Desktop : ViewPager, DesktopCallback {
     private var _feedSwipeStartY: Float = 0f
     private var _isFeedSwipeDetected: Boolean = false
 
-    constructor(context: Context) : super(context, null)
+    // Multi-touch gesture detector
+    private lateinit var _multiTouchGestureDetector: MultiTouchGestureDetector
 
-    constructor(context: Context, attr: AttributeSet?) : super(context, attr)
+    constructor(context: Context) : super(context, null) {
+        init()
+    }
+
+    constructor(context: Context, attr: AttributeSet?) : super(context, attr) {
+        init()
+    }
+
+    private fun init() {
+        // Initialize multi-touch gesture detector
+        _multiTouchGestureDetector = MultiTouchGestureDetector(
+            context,
+            MultiTouchGestureDetector.createListener(
+                onPinchIn = { handleGesture(com.benny.openlauncher.R.string.pref_key__gesture_pinch_in) },
+                onPinchOut = { handleGesture(com.benny.openlauncher.R.string.pref_key__gesture_pinch_out) },
+                onTwoFingerScrollUp = { handleGesture(com.benny.openlauncher.R.string.pref_key__gesture_two_finger_scroll_up) },
+                onTwoFingerScrollDown = { handleGesture(com.benny.openlauncher.R.string.pref_key__gesture_two_finger_scroll_down) },
+                onTwoFingerDoubleTap = { handleGesture(com.benny.openlauncher.R.string.pref_key__gesture_two_finger_double_tap) }
+            )
+        )
+    }
+
+    /**
+     * Handle a multi-touch gesture by executing the configured action
+     */
+    private fun handleGesture(gestureKey: Int): Boolean {
+        val gesture = Setup.appSettings().getGesture(gestureKey)
+
+        if (Setup.appSettings().getGestureFeedback()) {
+            Tool.vibrate(this)
+        }
+
+        return when (gesture) {
+            is android.content.Intent -> {
+                // Launch app
+                Tool.startApp(context, gesture, null)
+                true
+            }
+            is LauncherAction.ActionDisplayItem -> {
+                // Execute launcher action
+                LauncherAction.RunAction(gesture._action, context)
+                true
+            }
+            else -> false
+        }
+    }
 
     inner class DesktopAdapter(private val _desktop: Desktop) : PagerAdapter() {
         init {
@@ -390,6 +438,11 @@ class Desktop : ViewPager, DesktopCallback {
     }
 
     override fun onTouchEvent(ev: android.view.MotionEvent): Boolean {
+        // First check multi-touch gestures
+        if (_multiTouchGestureDetector.onTouchEvent(ev)) {
+            return true
+        }
+
         // Detect swipe-right gesture from page 0 to open feed
         when (ev.action) {
             android.view.MotionEvent.ACTION_DOWN -> {

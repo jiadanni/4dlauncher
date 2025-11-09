@@ -28,7 +28,10 @@ class SettingsBehaviorFragment : SettingsBaseFragment() {
             R.string.pref_key__gesture_swipe_up,
             R.string.pref_key__gesture_swipe_down,
             R.string.pref_key__gesture_pinch_in,
-            R.string.pref_key__gesture_pinch_out -> {
+            R.string.pref_key__gesture_pinch_out,
+            R.string.pref_key__gesture_two_finger_scroll_up,
+            R.string.pref_key__gesture_two_finger_scroll_down,
+            R.string.pref_key__gesture_two_finger_double_tap -> {
                 DialogHelper.selectGestureDialog(requireActivity(), preference.title.toString()) { _, _, position, _ ->
                     when (position) {
                         1 -> {
@@ -57,7 +60,10 @@ class SettingsBehaviorFragment : SettingsBaseFragment() {
             R.string.pref_key__gesture_swipe_up,
             R.string.pref_key__gesture_swipe_down,
             R.string.pref_key__gesture_pinch_in,
-            R.string.pref_key__gesture_pinch_out
+            R.string.pref_key__gesture_pinch_out,
+            R.string.pref_key__gesture_two_finger_scroll_up,
+            R.string.pref_key__gesture_two_finger_scroll_down,
+            R.string.pref_key__gesture_two_finger_double_tap
         )
 
         for (resId in gestures) {

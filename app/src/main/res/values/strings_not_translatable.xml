@@ -68,6 +68,9 @@
     <string name="pref_key__gesture_swipe_down" translatable="false">pref_key__gesture_swipe_down</string>
     <string name="pref_key__gesture_pinch_in" translatable="false">pref_key__gesture_pinch_in</string>
     <string name="pref_key__gesture_pinch_out" translatable="false">pref_key__gesture_pinch_out</string>
+    <string name="pref_key__gesture_two_finger_scroll_up" translatable="false">pref_key__gesture_two_finger_scroll_up</string>
+    <string name="pref_key__gesture_two_finger_scroll_down" translatable="false">pref_key__gesture_two_finger_scroll_down</string>
+    <string name="pref_key__gesture_two_finger_double_tap" translatable="false">pref_key__gesture_two_finger_double_tap</string>
 
     <string name="pref_key__theme" translatable="false">pref_key__theme</string>
     <string name="pref_key__primary_color" translatable="false">pref_key__primary_color</string>
