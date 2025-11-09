@@ -1,6 +1,37 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
+def getUsedAndroidLocales() {
+    def langs = new HashSet<String>()
+    new File(project.projectDir, 'src/main/res').eachDir { dir ->
+        def dirName = dir.name
+        if (dirName.startsWith('values-')) {
+            dir.eachFile { file ->
+                if (file.name.endsWith(".xml")) {
+                    if (file.getText('UTF-8').contains("<string")) {
+                        langs.add('"' + dirName.replace("values-", "") + '"')
+                        return
+                    }
+                }
+            }
+        }
+    }
+    return "new String[]{" + langs.join(',') + "}"
+}
+
+def getBuildDate() {
+    return new Date().format('yyyy-MM-dd')
+}
+
+def getGitHash() {
+    try {
+        def proc = 'git rev-parse --short HEAD'.execute()
+        proc.in.eachLine { line -> return line }
+    } catch (e) {
+        return "N/A"
+    }
+}
+
 android {
     namespace 'com.benny.openlauncher'
     compileSdkVersion version_compileSdk
@@ -16,7 +47,7 @@ android {
 
         buildConfigField "boolean", "IS_TEST_BUILD", "false"
         buildConfigField "boolean", "IS_GPLAY_BUILD", "false"
-        buildConfigField "String[]", "DETECTED_ANDROID_LOCALES", "${findUsedAndroidLocales()}"
+        buildConfigField "String[]", "DETECTED_ANDROID_LOCALES", getUsedAndroidLocales()
         buildConfigField "String", "BUILD_DATE", "\"${getBuildDate()}\""
         buildConfigField "String", "GITHASH", "\"${getGitHash()}\""
         resValue "string", "manifest_package_id", "com.benny.openlauncher"
@@ -88,12 +119,22 @@ android {
         disable 'MissingTranslation', 'InvalidPackage', 'ObsoleteLintCustomCheck', 'DefaultLocale', 'UnusedAttribute', 'VectorRaster', 'InflateParams', 'IconLocation', 'UnusedResources', 'TypographyEllipsis'
         abortOnError false
     }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+    }
 }
 
 dependencies {
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${version_plugin_kotlin}"
-    implementation "androidx.core:core-ktx:1.12.0"
+    implementation "androidx.core:core-ktx:1.13.1"
 
     // AndroidX libraries
     implementation "androidx.recyclerview:recyclerview:${version_library_recyclerview}"
@@ -109,12 +150,12 @@ dependencies {
     implementation 'com.mikepenz:fastadapter:5.7.0'
     implementation 'com.mikepenz:fastadapter-extensions-binding:5.7.0'
     implementation 'jp.wasabeef:recyclerview-animators:4.0.2'
-    implementation 'com.afollestad.material-dialogs:core:2.9.3'
-    implementation 'agency.tango.android:material-intro-screen:0.0.5'
+
+
     implementation 'cat.ereza:customactivityoncrash:2.4.0'
     implementation 'de.psdev.licensesdialog:licensesdialog:2.2.0'
-    implementation 'com.github.championswimmer:SimpleFingerGestures_Android_Library:1.2'
-    implementation 'com.github.hedzr:FilePickerDialog:v0.11'
+
+
     implementation 'org.slf4j:slf4j-android:1.7.36'
 
     implementation ('com.github.ozodrukh:CircularReveal:2.0.1@aar') {

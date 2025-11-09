@@ -153,7 +153,7 @@ object Tool {
     }
 
     fun startApp(context: Context, app: App, view: View?) {
-        val launcher = HomeActivity.Companion.launcher
+        val launcher = HomeActivity._launcher
         launcher.onStartApp(context, app, view)
     }
 
