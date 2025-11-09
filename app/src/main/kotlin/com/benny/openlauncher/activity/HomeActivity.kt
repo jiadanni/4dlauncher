@@ -25,6 +25,7 @@ import com.benny.openlauncher.activity.homeparts.HpDesktopOption
 import com.benny.openlauncher.activity.homeparts.HpDragOption
 import com.benny.openlauncher.activity.homeparts.HpInitSetup
 import com.benny.openlauncher.activity.homeparts.HpSearchBar
+import com.benny.openlauncher.feed.FeedPermissionManager
 import com.benny.openlauncher.interfaces.AppDeleteListener
 import com.benny.openlauncher.interfaces.AppUpdateListener
 import com.benny.openlauncher.manager.Setup
@@ -65,6 +66,7 @@ class HomeActivity : Activity(), OnDesktopEditListener {
     private lateinit var appUpdateReceiver: AppUpdateReceiver
     private lateinit var shortcutReceiver: ShortcutReceiver
     private lateinit var timeChangedReceiver: BroadcastReceiver
+    private lateinit var feedPermissionManager: FeedPermissionManager
 
     val drawerLayout: DrawerLayout
         get() = findViewById(R.id.drawer_layout)
@@ -139,6 +141,9 @@ class HomeActivity : Activity(), OnDesktopEditListener {
         _appWidgetManager = AppWidgetManager.getInstance(this)
         _appWidgetHost = WidgetHost(applicationContext, R.id.app_widget_host)
         _appWidgetHost.startListening()
+
+        // Initialize feed permission manager
+        feedPermissionManager = FeedPermissionManager(this)
 
         // item drag and drop
         val hpDragOption = HpDragOption()
@@ -470,6 +475,33 @@ class HomeActivity : Activity(), OnDesktopEditListener {
         }
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        // Handle feed permission results
+        val result = feedPermissionManager.handlePermissionResult(requestCode, permissions, grantResults)
+
+        when (result) {
+            is FeedPermissionManager.PermissionResult.ALL_GRANTED -> {
+                // All permissions granted, open the feed
+                Tool.toast(this, "Feed permissions granted")
+                drawerLayout.openDrawer(androidx.core.view.GravityCompat.END)
+                feedView.refreshFeed()
+            }
+            is FeedPermissionManager.PermissionResult.PARTIALLY_DENIED -> {
+                // Some permissions denied, show explanation
+                showFeedPermissionDenied(result.deniedPermissions)
+            }
+            is FeedPermissionManager.PermissionResult.NOT_HANDLED -> {
+                // Not our request code, ignore
+            }
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         _appWidgetHost.startListening()
@@ -563,12 +595,58 @@ class HomeActivity : Activity(), OnDesktopEditListener {
     }
 
     fun openFeed() {
-        drawerLayout.openDrawer(androidx.core.view.GravityCompat.END)
-        feedView.refreshFeed()
+        // Check if we have all required permissions
+        if (FeedPermissionManager.hasAllPermissions(this)) {
+            // All permissions granted, open the feed
+            drawerLayout.openDrawer(androidx.core.view.GravityCompat.END)
+            feedView.refreshFeed()
+        } else {
+            // Request missing permissions
+            if (feedPermissionManager.shouldShowRationale()) {
+                // Show rationale dialog first
+                showFeedPermissionRationale()
+            } else {
+                // Request permissions directly
+                feedPermissionManager.requestPermissions()
+            }
+        }
     }
 
     fun closeFeed() {
         drawerLayout.closeDrawer(androidx.core.view.GravityCompat.END)
+    }
+
+    /**
+     * Show a rationale dialog explaining why feed permissions are needed
+     */
+    private fun showFeedPermissionRationale() {
+        val missingPermissions = FeedPermissionManager.getMissingPermissions(this)
+        val rationaleMessage = feedPermissionManager.getRationaleMessage(missingPermissions)
+
+        DialogHelper.alertDialog(
+            this,
+            "Feed Permissions",
+            rationaleMessage,
+            "Grant Permissions"
+        ) { _, _ ->
+            feedPermissionManager.requestPermissions()
+        }
+    }
+
+    /**
+     * Show a dialog when permissions are denied
+     */
+    private fun showFeedPermissionDenied(deniedPermissions: List<String>) {
+        val deniedMessage = feedPermissionManager.getDeniedMessage(deniedPermissions)
+
+        DialogHelper.alertDialog(
+            this,
+            "Permissions Required",
+            deniedMessage,
+            "OK"
+        ) { _, _ ->
+            // User acknowledged, do nothing
+        }
     }
 
     companion object {
