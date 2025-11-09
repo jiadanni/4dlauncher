@@ -105,6 +105,9 @@ class HomeActivity : Activity(), OnDesktopEditListener {
     val navigationView: View
         get() = findViewById(R.id.navigation_frame)
 
+    val feedView: com.benny.openlauncher.widget.FeedView
+        get() = findViewById(R.id.feed_view)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         Companion.launcher = this
         AndroidThreeTen.init(this)
@@ -459,6 +462,14 @@ class HomeActivity : Activity(), OnDesktopEditListener {
         }
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        // Handle assist intent to open feed
+        if (intent?.action == Intent.ACTION_ASSIST) {
+            openFeed()
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         _appWidgetHost.startListening()
@@ -549,6 +560,15 @@ class HomeActivity : Activity(), OnDesktopEditListener {
 
     fun closeAppDrawer() {
         appDrawerController.close(cx, cy)
+    }
+
+    fun openFeed() {
+        drawerLayout.openDrawer(androidx.core.view.GravityCompat.END)
+        feedView.refreshFeed()
+    }
+
+    fun closeFeed() {
+        drawerLayout.closeDrawer(androidx.core.view.GravityCompat.END)
     }
 
     companion object {

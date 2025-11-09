@@ -26,6 +26,13 @@
 
         </FrameLayout>
 
+        <!-- Feed view on the end (right) side -->
+        <com.benny.openlauncher.widget.FeedView
+            android:id="@+id/feed_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="end" />
+
     </android.support.v4.widget.DrawerLayout>
 
 </FrameLayout>

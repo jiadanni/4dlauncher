@@ -40,6 +40,11 @@ class Desktop : ViewPager, DesktopCallback {
     private var _previousItemView: View? = null
     private var _previousPage: Int = 0
 
+    // For feed swipe gesture detection
+    private var _feedSwipeStartX: Float = 0f
+    private var _feedSwipeStartY: Float = 0f
+    private var _isFeedSwipeDetected: Boolean = false
+
     constructor(context: Context) : super(context, null)
 
     constructor(context: Context, attr: AttributeSet?) : super(context, attr)
@@ -382,6 +387,37 @@ class Desktop : ViewPager, DesktopCallback {
         val wallpaperManager = WallpaperManager.getInstance(context)
         wallpaperManager.setWallpaperOffsets(windowToken, xOffset, 0.0f)
         super.onPageScrolled(position, offset, offsetPixels)
+    }
+
+    override fun onTouchEvent(ev: android.view.MotionEvent): Boolean {
+        // Detect swipe-right gesture from page 0 to open feed
+        when (ev.action) {
+            android.view.MotionEvent.ACTION_DOWN -> {
+                _feedSwipeStartX = ev.x
+                _feedSwipeStartY = ev.y
+                _isFeedSwipeDetected = false
+            }
+            android.view.MotionEvent.ACTION_MOVE -> {
+                // Only detect if we're on the first page
+                if (currentItem == 0 && !_isFeedSwipeDetected) {
+                    val deltaX = ev.x - _feedSwipeStartX
+                    val deltaY = ev.y - _feedSwipeStartY
+
+                    // Swipe right (positive deltaX) from page 0
+                    // Require horizontal swipe to be dominant over vertical
+                    if (deltaX > 150 && Math.abs(deltaY) < Math.abs(deltaX) / 2) {
+                        _isFeedSwipeDetected = true
+                        HomeActivity._launcher?.openFeed()
+                        return true
+                    }
+                }
+            }
+            android.view.MotionEvent.ACTION_UP, android.view.MotionEvent.ACTION_CANCEL -> {
+                _isFeedSwipeDetected = false
+            }
+        }
+
+        return super.onTouchEvent(ev)
     }
 
     interface OnDesktopEditListener {
