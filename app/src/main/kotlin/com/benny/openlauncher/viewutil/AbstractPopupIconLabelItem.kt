@@ -1,0 +1,19 @@
+package com.benny.openlauncher.viewutil
+
+import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.benny.openlauncher.R
+import com.mikepenz.fastadapter.IClickable
+import com.mikepenz.fastadapter.IItem
+import com.mikepenz.fastadapter.items.AbstractItem
+
+abstract class AbstractPopupIconLabelItem<Item> : AbstractItem<AbstractPopupIconLabelItem.ViewHolder>()
+        where Item : IItem<*>, Item : IClickable<*> {
+
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val iconView: ImageView = itemView.findViewById(R.id.item_popup_icon)
+        val labelView: TextView = itemView.findViewById(R.id.item_popup_label)
+    }
+}
