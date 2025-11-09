@@ -443,6 +443,10 @@ class AppSettings(context: Context) : SharedPreferencesPropertyBackend(context, 
     @Deprecated("Use searchUseGrid property", ReplaceWith("searchUseGrid"))
     fun getSearchUseGrid(): Boolean = searchUseGrid
 
+    // Feed settings
+    val feedWeatherApiKey: String
+        get() = getString(R.string.pref_key__feed_weather_api_key, R.string.pref_default__feed_weather_api_key)
+
     @Deprecated("Use searchUseGrid property", ReplaceWith("searchUseGrid = enabled"))
     fun setSearchUseGrid(enabled: Boolean) {
         searchUseGrid = enabled

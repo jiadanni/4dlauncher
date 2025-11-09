@@ -4,30 +4,37 @@ import android.content.Context
 import android.location.Location
 import android.location.LocationManager
 import com.benny.openlauncher.feed.FeedCard
+import com.benny.openlauncher.util.AppSettings
 import org.json.JSONObject
 import java.net.URL
 
 /**
  * Provides weather information for feed cards
  * Uses OpenWeatherMap API (free tier available)
+ * Get your free API key at: https://openweathermap.org/api
  */
 class WeatherProvider(private val context: Context) {
 
-    // TODO: Replace with actual API key from OpenWeatherMap
-    private val apiKey = "YOUR_API_KEY_HERE"
     private val baseUrl = "https://api.openweathermap.org/data/2.5/weather"
+
+    private val apiKey: String
+        get() = AppSettings.get().feedWeatherApiKey
 
     /**
      * Get current weather card
      */
     suspend fun getWeatherCard(): FeedCard.WeatherCard? {
+        // Check if API key is configured
+        if (apiKey.isBlank()) {
+            return null // No API key configured, return null
+        }
+
         return try {
             val location = getLastKnownLocation() ?: return null
             fetchWeatherData(location.latitude, location.longitude)
         } catch (e: Exception) {
             e.printStackTrace()
-            // Return mock data for development
-            getMockWeatherCard()
+            null
         }
     }
 

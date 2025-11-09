@@ -99,6 +99,11 @@
     <string name="pref_key__queue_restart" translatable="false">pref_key__queue_restart</string>
     <string name="pref_key__desktop_search_use_grid" translatable="false">pref_key__desktop_search_use_grid</string>
 
+    <!-- Feed settings -->
+    <string name="pref_key__cat_feed" translatable="false">pref_key__cat_feed</string>
+    <string name="pref_key__feed_weather_api_key" translatable="false">pref_key__feed_weather_api_key</string>
+    <string name="pref_default__feed_weather_api_key" translatable="false"></string>
+
     <string name="pref_key__more_info__settings" translatable="false">pref_key__more_info__settings</string>
     <string name="pref_key__more_info__source_code" translatable="false">pref_key__more_info__source_code</string>
     <string name="pref_key__more_info__project_license" translatable="false">pref_key__more_info__project_license</string>
