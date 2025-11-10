@@ -33,7 +33,6 @@ import com.benny.openlauncher.model.App
 import com.benny.openlauncher.model.Item
 import com.benny.openlauncher.notifications.NotificationListener
 import com.benny.openlauncher.receivers.AppUpdateReceiver
-import com.benny.openlauncher.receivers.ShortcutReceiver
 import com.benny.openlauncher.util.AppManager
 import com.benny.openlauncher.util.AppSettings
 import com.benny.openlauncher.util.DatabaseHelper
@@ -64,7 +63,6 @@ class HomeActivity : Activity(), OnDesktopEditListener {
     private var cy: Int = 0
 
     private lateinit var appUpdateReceiver: AppUpdateReceiver
-    private lateinit var shortcutReceiver: ShortcutReceiver
     private lateinit var timeChangedReceiver: BroadcastReceiver
     private lateinit var feedPermissionManager: FeedPermissionManager
 
@@ -254,7 +252,6 @@ class HomeActivity : Activity(), OnDesktopEditListener {
 
     private fun registerBroadcastReceiver() {
         appUpdateReceiver = AppUpdateReceiver()
-        shortcutReceiver = ShortcutReceiver()
         timeChangedReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 when (intent.action) {
@@ -267,7 +264,6 @@ class HomeActivity : Activity(), OnDesktopEditListener {
 
         // register all receivers
         registerReceiver(appUpdateReceiver, _appUpdateIntentFilter)
-        registerReceiver(shortcutReceiver, _shortcutIntentFilter)
         registerReceiver(timeChangedReceiver, _timeChangedIntentFilter)
     }
 
@@ -535,7 +531,6 @@ class HomeActivity : Activity(), OnDesktopEditListener {
         _launcher = null
 
         unregisterReceiver(appUpdateReceiver)
-        unregisterReceiver(shortcutReceiver)
         unregisterReceiver(timeChangedReceiver)
         super.onDestroy()
     }
@@ -683,7 +678,6 @@ class HomeActivity : Activity(), OnDesktopEditListener {
 
         // receiver variables
         private val _appUpdateIntentFilter = IntentFilter()
-        private val _shortcutIntentFilter = IntentFilter()
         private val _timeChangedIntentFilter = IntentFilter()
 
         init {
@@ -694,7 +688,6 @@ class HomeActivity : Activity(), OnDesktopEditListener {
             _appUpdateIntentFilter.addAction(Intent.ACTION_PACKAGE_ADDED)
             _appUpdateIntentFilter.addAction(Intent.ACTION_PACKAGE_REMOVED)
             _appUpdateIntentFilter.addAction(Intent.ACTION_PACKAGE_CHANGED)
-            _shortcutIntentFilter.addAction("com.android.launcher.action.INSTALL_SHORTCUT")
         }
 
         @JvmStatic
