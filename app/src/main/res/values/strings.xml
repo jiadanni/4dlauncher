@@ -152,6 +152,9 @@
     <string name="pref_title__gesture_swipe_down">Swipe Down</string>
     <string name="pref_title__gesture_pinch_in">Pinch In</string>
     <string name="pref_title__gesture_pinch_out">Pinch Out</string>
+    <string name="pref_title__gesture_two_finger_scroll_up">Two-Finger Scroll Up</string>
+    <string name="pref_title__gesture_two_finger_scroll_down">Two-Finger Scroll Down</string>
+    <string name="pref_title__gesture_two_finger_double_tap">Two-Finger Double Tap</string>
 
     <string name="pref_title__theme">Theme</string>
     <string name="pref_summary__theme">Set the theme for the entire app.</string>
@@ -253,4 +256,11 @@
     <string name="toast_icon_pack_error">Please read access for external storage.</string>
     <string name="toast_remove_from_group_first">Remove item from group first.</string>
     <string name="toast_update_group_due_to_missing_items">Uninstalled or hidden apps were removed from this group.</string>
+
+    <!-- Feed settings -->
+    <string name="pref_title__feed">Feed</string>
+    <string name="pref_title__feed_weather_api_key">Weather API Key</string>
+    <string name="pref_summary__feed_weather_api_key">OpenWeatherMap API key for weather cards. Get your free key at openweathermap.org</string>
+    <string name="pref_dialog_feed_weather_api_key">Enter your OpenWeatherMap API key</string>
+
 </resources>

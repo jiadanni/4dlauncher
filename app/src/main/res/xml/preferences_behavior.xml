@@ -49,6 +49,21 @@
             android:key="@string/pref_key__gesture_pinch_out"
             android:title="@string/pref_title__gesture_pinch_out" />
 
+        <Preference
+            android:defaultValue="0"
+            android:key="@string/pref_key__gesture_two_finger_scroll_up"
+            android:title="@string/pref_title__gesture_two_finger_scroll_up" />
+
+        <Preference
+            android:defaultValue="0"
+            android:key="@string/pref_key__gesture_two_finger_scroll_down"
+            android:title="@string/pref_title__gesture_two_finger_scroll_down" />
+
+        <Preference
+            android:defaultValue="0"
+            android:key="@string/pref_key__gesture_two_finger_double_tap"
+            android:title="@string/pref_title__gesture_two_finger_double_tap" />
+
     </com.benny.openlauncher.widget.ColorPreferenceCategory>
 
 </PreferenceScreen>

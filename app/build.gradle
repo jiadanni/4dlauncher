@@ -1,6 +1,40 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+def getUsedAndroidLocales() {
+    def langs = new HashSet<String>()
+    new File(project.projectDir, 'src/main/res').eachDir { dir ->
+        def dirName = dir.name
+        if (dirName.startsWith('values-')) {
+            dir.eachFile { file ->
+                if (file.name.endsWith(".xml")) {
+                    if (file.getText('UTF-8').contains("<string")) {
+                        langs.add('"' + dirName.replace("values-", "") + '"')
+                        return
+                    }
+                }
+            }
+        }
+    }
+    return "new String[]{" + langs.join(',') + "}"
+}
+
+def getBuildDate() {
+    return new Date().format('yyyy-MM-dd')
+}
+
+def getGitHash() {
+    try {
+        def proc = 'git rev-parse --short HEAD'.execute()
+        proc.in.eachLine { line -> return line }
+    } catch (e) {
+        return "N/A"
+    }
+}
 
 android {
+    namespace 'com.benny.openlauncher'
     compileSdkVersion version_compileSdk
     buildToolsVersion version_buildTools
 
@@ -14,7 +48,7 @@ android {
 
         buildConfigField "boolean", "IS_TEST_BUILD", "false"
         buildConfigField "boolean", "IS_GPLAY_BUILD", "false"
-        buildConfigField "String[]", "DETECTED_ANDROID_LOCALES", "${findUsedAndroidLocales()}"
+        buildConfigField "String[]", "DETECTED_ANDROID_LOCALES", getUsedAndroidLocales()
         buildConfigField "String", "BUILD_DATE", "\"${getBuildDate()}\""
         buildConfigField "String", "GITHASH", "\"${getGitHash()}\""
         resValue "string", "manifest_package_id", "com.benny.openlauncher"
@@ -44,8 +78,17 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
+    buildFeatures {
+        viewBinding true
+        buildConfig true
     }
 
     buildTypes {
@@ -58,60 +101,76 @@ android {
         }
     }
 
-    configurations.all {
-        resolutionStrategy {
-            eachDependency { details ->
-                if (details.requested.group == 'com.android.support') {
-                    if (details.requested.name != 'multidex' && details.requested.name != 'multidex-instrumentation') {
-                        details.useVersion "${version_library_appcompat}"
-                    }
-                }
-            }
+    // No longer needed with AndroidX
+    // configurations.all {
+    //     resolutionStrategy {
+    //         eachDependency { details ->
+    //             if (details.requested.group == 'com.android.support') {
+    //                 if (details.requested.name != 'multidex' && details.requested.name != 'multidex-instrumentation') {
+    //                     details.useVersion "${version_library_appcompat}"
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+
+    packaging {
+        resources {
+            excludes += ['META-INF/LICENSE-LGPL-2.1.txt', 'META-INF/LICENSE-LGPL-3.txt', 'META-INF/LICENSE-W3C-TEST']
         }
     }
 
-    packagingOptions {
-        exclude 'META-INF/LICENSE-LGPL-2.1.txt'
-        exclude 'META-INF/LICENSE-LGPL-3.txt'
-        exclude 'META-INF/LICENSE-W3C-TEST'
-    }
-
-    lintOptions {
+    lint {
         disable 'MissingTranslation', 'InvalidPackage', 'ObsoleteLintCustomCheck', 'DefaultLocale', 'UnusedAttribute', 'VectorRaster', 'InflateParams', 'IconLocation', 'UnusedResources', 'TypographyEllipsis'
         abortOnError false
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
     }
 }
 
 dependencies {
-    // Support libraries
-    implementation "com.android.support:recyclerview-v7:${version_library_appcompat}"
-    implementation "com.android.support:appcompat-v7:${version_library_appcompat}"
-    implementation "com.android.support:cardview-v7:${version_library_appcompat}"
-    implementation "com.android.support:design:${version_library_appcompat}"
-    implementation "com.android.support:support-v13:${version_library_appcompat}"
-    implementation "com.android.support:preference-v7:${version_library_appcompat}"
-    implementation "com.android.support:preference-v14:${version_library_appcompat}"
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
-    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
+    // Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:${version_plugin_kotlin}"
+    implementation "androidx.core:core-ktx:1.13.1"
+
+    // AndroidX libraries
+    implementation "androidx.recyclerview:recyclerview:${version_library_recyclerview}"
+    implementation "androidx.appcompat:appcompat:${version_library_appcompat}"
+    implementation "androidx.cardview:cardview:${version_library_cardview}"
+    implementation "com.google.android.material:material:${version_library_design}"
+    implementation "androidx.legacy:legacy-preference-v14:1.0.0"
+    implementation "androidx.preference:preference:${version_library_preference}"
+    implementation "androidx.constraintlayout:constraintlayout:${version_library_constraintlayout}"
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.4.6'
 
     // UI Libs
-    implementation 'com.mikepenz:fastadapter:3.2.3@aar'
-    implementation 'com.mikepenz:fastadapter-commons:3.0.0@aar'
-    implementation 'com.mikepenz:fastadapter-extensions:3.0.0@aar'
-    implementation 'jp.wasabeef:recyclerview-animators:2.2.7'
-    implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
-    implementation 'agency.tango.android:material-intro-screen:0.0.5'
-    implementation 'cat.ereza:customactivityoncrash:2.2.0'
-    implementation 'de.psdev.licensesdialog:licensesdialog:1.8.3'
-    implementation 'com.github.championswimmer:SimpleFingerGestures_Android_Library:1.1'
+    implementation 'com.mikepenz:fastadapter:5.7.0'
+    implementation 'com.mikepenz:fastadapter-extensions-binding:5.7.0'
+    implementation 'com.mikepenz:fastadapter-extensions-utils:5.7.0'
+    implementation 'com.mikepenz:fastadapter-extensions-drag:5.7.0'
+    implementation 'jp.wasabeef:recyclerview-animators:4.0.2'
+
+
+    implementation 'cat.ereza:customactivityoncrash:2.4.0'
+    implementation 'de.psdev.licensesdialog:licensesdialog:2.2.0'
     implementation 'com.nononsenseapps:filepicker:4.2.1'
-    implementation 'org.slf4j:slf4j-android:1.7.21'
+
+
+    implementation 'org.slf4j:slf4j-android:1.7.36'
 
     implementation ('com.github.ozodrukh:CircularReveal:2.0.1@aar') {
         transitive = true
     }
 
-    implementation('com.github.turing-tech:MaterialScrollBar:13.3.0') {
+    implementation('com.github.turing-tech:MaterialScrollBar:13.3.4') {
         exclude group: 'com.android.support'
     }
 
@@ -119,10 +178,7 @@ dependencies {
     implementation "com.jakewharton:butterknife:${version_library_butterknife}"
 
     // Processors
-    def anpros = ["com.jakewharton:butterknife-compiler:${version_library_butterknife}"]
-    for (anpro in anpros) {
-        annotationProcessor anpro
-    }
+    kapt "com.jakewharton:butterknife-compiler:${version_library_butterknife}"
 }
 
 repositories {

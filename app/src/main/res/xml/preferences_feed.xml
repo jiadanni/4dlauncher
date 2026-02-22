@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:title="@string/pref_title__feed">
+
+    <com.benny.openlauncher.widget.ColorPreferenceCategory android:title="@string/pref_title__feed">
+
+        <EditTextPreference
+            android:key="@string/pref_key__feed_weather_api_key"
+            android:title="@string/pref_title__feed_weather_api_key"
+            android:summary="@string/pref_summary__feed_weather_api_key"
+            android:dialogTitle="@string/pref_dialog_feed_weather_api_key"
+            android:defaultValue="@string/pref_default__feed_weather_api_key"
+            android:inputType="text" />
+
+    </com.benny.openlauncher.widget.ColorPreferenceCategory>
+
+</PreferenceScreen>

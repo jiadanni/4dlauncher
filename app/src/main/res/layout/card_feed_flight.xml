@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Flight number and airline -->
+        <TextView
+            android:id="@+id/flight_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="United Airlines UA123"
+            android:textSize="16sp"
+            android:textColor="#212121"
+            android:textStyle="bold" />
+
+        <!-- Route -->
+        <TextView
+            android:id="@+id/flight_route"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SFO → LAX"
+            android:textSize="20sp"
+            android:textColor="#424242"
+            android:layout_marginTop="8dp" />
+
+        <!-- Departure time -->
+        <TextView
+            android:id="@+id/flight_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Departs 2:30 PM"
+            android:textSize="14sp"
+            android:textColor="#757575"
+            android:layout_marginTop="4dp" />
+
+        <!-- Status and gate row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:id="@+id/flight_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="On time"
+                android:textSize="13sp"
+                android:textColor="#2E7D32"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/flight_gate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gate B12"
+                android:textSize="13sp"
+                android:textColor="#424242"
+                android:layout_marginLeft="16dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
