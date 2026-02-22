@@ -16,13 +16,6 @@ class OnBoardActivity : MaterialIntroActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // TODO remove after sufficient time has passed
-        if (!getSharedPreferences("quickSettings", Context.MODE_PRIVATE).getBoolean("firstStart", true)) {
-            getSharedPreferences("app", Context.MODE_PRIVATE).edit()
-                .putBoolean(resources.getString(R.string.pref_key__show_intro), false)
-                .commit()
-        }
-
         if (!getSharedPreferences("app", Context.MODE_PRIVATE)
                 .getBoolean(resources.getString(R.string.pref_key__show_intro), false)
         ) {
