@@ -68,6 +68,9 @@
     <string name="pref_key__gesture_swipe_down" translatable="false">pref_key__gesture_swipe_down</string>
     <string name="pref_key__gesture_pinch_in" translatable="false">pref_key__gesture_pinch_in</string>
     <string name="pref_key__gesture_pinch_out" translatable="false">pref_key__gesture_pinch_out</string>
+    <string name="pref_key__gesture_two_finger_scroll_up" translatable="false">pref_key__gesture_two_finger_scroll_up</string>
+    <string name="pref_key__gesture_two_finger_scroll_down" translatable="false">pref_key__gesture_two_finger_scroll_down</string>
+    <string name="pref_key__gesture_two_finger_double_tap" translatable="false">pref_key__gesture_two_finger_double_tap</string>
 
     <string name="pref_key__theme" translatable="false">pref_key__theme</string>
     <string name="pref_key__primary_color" translatable="false">pref_key__primary_color</string>
@@ -98,6 +101,11 @@
     <string name="pref_key__desktop_current_position" translatable="false">pref_key__desktop_current_position</string>
     <string name="pref_key__queue_restart" translatable="false">pref_key__queue_restart</string>
     <string name="pref_key__desktop_search_use_grid" translatable="false">pref_key__desktop_search_use_grid</string>
+
+    <!-- Feed settings -->
+    <string name="pref_key__cat_feed" translatable="false">pref_key__cat_feed</string>
+    <string name="pref_key__feed_weather_api_key" translatable="false">pref_key__feed_weather_api_key</string>
+    <string name="pref_default__feed_weather_api_key" translatable="false"></string>
 
     <string name="pref_key__more_info__settings" translatable="false">pref_key__more_info__settings</string>
     <string name="pref_key__more_info__source_code" translatable="false">pref_key__more_info__source_code</string>

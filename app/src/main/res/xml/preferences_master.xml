@@ -35,6 +35,12 @@
     <com.benny.openlauncher.widget.ColorPreferenceCategory android:title="@string/pref_title__others">
 
         <PreferenceScreen
+            android:fragment="com.benny.openlauncher.fragment.SettingsFeedFragment"
+            android:icon="@drawable/ic_info"
+            android:key="@string/pref_key__cat_feed"
+            android:title="@string/pref_title__feed" />
+
+        <PreferenceScreen
             android:fragment="com.benny.openlauncher.fragment.SettingsBehaviorFragment"
             android:icon="@drawable/ic_behavior"
             android:key="@string/pref_key__cat_behavior"
