@@ -35,7 +35,7 @@ class HpGestureCallback(
             }
             when (gesture) {
                 is Intent -> {
-                    Tool.startApp(HomeActivity._launcher, Setup.appLoader().findApp(gesture), null)
+                    Tool.startApp(desktop.context, Setup.appLoader().findApp(gesture), null)
                 }
                 is LauncherAction.ActionDisplayItem -> {
                     LauncherAction.RunAction(gesture, desktop.context)

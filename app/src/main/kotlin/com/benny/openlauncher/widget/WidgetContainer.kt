@@ -81,7 +81,7 @@ class WidgetContainer(context: Context, widgetView: WidgetView, private val item
     }
 
     fun scaleWidget(view: View, item: Item) {
-        val launcher = HomeActivity.launcher ?: return
+        val launcher = com.benny.openlauncher.util.Tool.getLauncher(context) ?: return
         val currentPage = launcher.desktop.currentPage
 
         item.spanX = min(item.spanX, currentPage.cellSpanH)
@@ -109,7 +109,7 @@ class WidgetContainer(context: Context, widgetView: WidgetView, private val item
             updateWidgetOption(item)
 
             // update the widget size in the database
-            HomeActivity._db.saveItem(item)
+            com.benny.openlauncher.manager.Setup.dataManager().saveItem(item)
         } else {
             Toast.makeText(
                 launcher.desktop.context,
@@ -123,7 +123,7 @@ class WidgetContainer(context: Context, widgetView: WidgetView, private val item
     }
 
     fun updateWidgetOption(item: Item) {
-        val launcher = HomeActivity.launcher ?: return
+        val launcher = com.benny.openlauncher.util.Tool.getLauncher(context) ?: return
         val currentPage = launcher.desktop.currentPage
         val cellWidth = currentPage.cellWidth
         val cellHeight = currentPage.cellHeight
@@ -139,6 +139,6 @@ class WidgetContainer(context: Context, widgetView: WidgetView, private val item
             putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, item.spanY * cellHeight)
             putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, item.spanY * cellHeight)
         }
-        HomeActivity._appWidgetManager.updateAppWidgetOptions(item.widgetValue, newOps)
+        AppWidgetManager.getInstance(context).updateAppWidgetOptions(item.widgetValue, newOps)
     }
 }

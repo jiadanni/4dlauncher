@@ -9,7 +9,8 @@ class AppObject : Application() {
     }
 
     companion object {
-        var _instance: AppObject? = null
-            private set
+        private var _instance: AppObject? = null
+
+        fun get(): AppObject = _instance ?: throw IllegalStateException("App not initialized")
     }
 }

@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.preference.Preference
 import com.benny.openlauncher.R
-import com.benny.openlauncher.activity.HomeActivity
+import com.benny.openlauncher.manager.Setup
 import com.benny.openlauncher.util.AppSettings
 import com.benny.openlauncher.util.Definitions
 import com.benny.openlauncher.viewutil.DialogHelper
@@ -20,8 +20,7 @@ class SettingsMiscellaneousFragment : SettingsBaseFragment() {
     }
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
-        val homeActivity = HomeActivity._launcher
-        val key = ContextUtils(homeActivity).getResId(ContextUtils.ResType.STRING, preference.key)
+        val key = ContextUtils(requireContext()).getResId(ContextUtils.ResType.STRING, preference.key)
 
         return when (key) {
             R.string.pref_key__backup -> {
@@ -51,8 +50,9 @@ class SettingsMiscellaneousFragment : SettingsBaseFragment() {
                     getString(R.string.are_you_sure)
                 ) { _, _ ->
                     AppSettings.get().resetSettings()
-                    homeActivity.recreate()
-                    Toast.makeText(HomeActivity._launcher, R.string.toast_settings_restored, Toast.LENGTH_SHORT).show()
+                    AppSettings.get().appRestartRequired = true
+                    requireActivity().finish()
+                    Toast.makeText(requireContext(), R.string.toast_settings_restored, Toast.LENGTH_SHORT).show()
                 }
                 true
             }
@@ -62,16 +62,17 @@ class SettingsMiscellaneousFragment : SettingsBaseFragment() {
                     getString(R.string.pref_title__reset_database),
                     getString(R.string.are_you_sure)
                 ) { _, _ ->
-                    val db = HomeActivity._db
+                    val db = Setup.dataManager()
                     db.onUpgrade(db.writableDatabase, 1, 1)
                     AppSettings.get().appFirstLaunch = true
-                    homeActivity.recreate()
-                    Toast.makeText(HomeActivity._launcher, R.string.toast_database_deleted, Toast.LENGTH_SHORT).show()
+                    AppSettings.get().appRestartRequired = true
+                    requireActivity().finish()
+                    Toast.makeText(requireContext(), R.string.toast_database_deleted, Toast.LENGTH_SHORT).show()
                 }
                 true
             }
             R.string.pref_key__restart -> {
-                homeActivity.recreate()
+                AppSettings.get().appRestartRequired = true
                 activity?.finish()
                 true
             }
