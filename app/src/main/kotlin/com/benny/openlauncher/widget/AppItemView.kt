@@ -209,7 +209,7 @@ class AppItemView @JvmOverloads constructor(
             view.label = item.label
             view.icon = GroupDrawable(context, item, Setup.appSettings().iconSize)
             view.setOnClickListener { v ->
-                HomeActivity.launcher?.let { launcher ->
+                Tool.getLauncher(v.context)?.let { launcher ->
                     if (launcher.groupPopup.showPopup(item, v, callback)) {
                         ((v as AppItemView).icon as? GroupDrawable)?.popUp()
                     }
@@ -223,7 +223,7 @@ class AppItemView @JvmOverloads constructor(
             view.icon = ContextCompat.getDrawable(Setup.appContext(), R.drawable.item_drawer)
             view.setOnClickListener {
                 Tool.createScaleInScaleOutAnim(view) {
-                    HomeActivity.launcher?.openAppDrawer(view, 0, 0)
+                    Tool.getLauncher(view.context)?.openAppDrawer(view, 0, 0)
                 }
             }
             return this

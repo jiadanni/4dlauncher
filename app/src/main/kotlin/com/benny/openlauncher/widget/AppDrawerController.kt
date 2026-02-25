@@ -8,9 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowInsets
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.FrameLayout
 import com.benny.openlauncher.R
 import com.benny.openlauncher.manager.Setup
-import io.codetail.widget.RevealFrameLayout
 import net.gsantner.opoc.util.Callback
 import kotlin.math.max
 
@@ -18,7 +18,7 @@ class AppDrawerController @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = 0
-) : RevealFrameLayout(context, attrs, defStyle) {
+) : FrameLayout(context, attrs, defStyle) {
 
     var _drawerViewPage: AppDrawerPage? = null
     var _drawerViewGrid: AppDrawerGrid? = null
@@ -50,7 +50,7 @@ class AppDrawerController @JvmOverloads constructor(
         _isOpen = true
 
         drawerAnimationTime = Setup.appSettings().animationSpeed * 10
-        appDrawerAnimator = io.codetail.animation.ViewAnimationUtils.createCircularReveal(
+        appDrawerAnimator = android.view.ViewAnimationUtils.createCircularReveal(
             drawer, cx, cy, 0f, max(width, height).toFloat()
         )
         appDrawerAnimator?.interpolator = AccelerateDecelerateInterpolator()
@@ -80,7 +80,7 @@ class AppDrawerController @JvmOverloads constructor(
         _isOpen = false
 
         drawerAnimationTime = Setup.appSettings().animationSpeed * 10
-        appDrawerAnimator = io.codetail.animation.ViewAnimationUtils.createCircularReveal(
+        appDrawerAnimator = android.view.ViewAnimationUtils.createCircularReveal(
             drawer, cx, cy, max(width, height).toFloat(), 0f
         )
         appDrawerAnimator?.interpolator = AccelerateDecelerateInterpolator()

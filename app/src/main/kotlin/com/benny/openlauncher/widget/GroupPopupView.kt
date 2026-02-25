@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.FrameLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
@@ -26,11 +27,9 @@ import com.benny.openlauncher.util.Tool
 import com.benny.openlauncher.viewutil.DesktopCallback
 import com.benny.openlauncher.viewutil.GroupDrawable
 import com.benny.openlauncher.viewutil.ItemViewFactory
-import io.codetail.animation.ViewAnimationUtils
-import io.codetail.widget.RevealFrameLayout
 import net.gsantner.opoc.util.ContextUtils
 
-class GroupPopupView : RevealFrameLayout {
+class GroupPopupView : FrameLayout {
     private var _isShowing = false
     private lateinit var _popupCard: CardView
     private lateinit var _cellContainer: CellContainer
@@ -116,10 +115,11 @@ class GroupPopupView : RevealFrameLayout {
                     val view = ItemViewFactory.getItemView(context, callback, DragAction.Action.DESKTOP, groupItem)
                     view.setOnLongClickListener {
                         if (Setup.appSettings().desktopLock) {
-                            if (HomeActivity.launcher != null) {
-                                HomeActivity._launcher.itemOptionView.showItemPopupForLockedDesktop(
+                            val launcher = Tool.getLauncher(context)
+                            if (launcher != null) {
+                                launcher.itemOptionView.showItemPopupForLockedDesktop(
                                     groupItem,
-                                    HomeActivity.launcher
+                                    launcher as HomeActivity
                                 )
                                 return@setOnLongClickListener true
                             }
@@ -232,7 +232,7 @@ class GroupPopupView : RevealFrameLayout {
         val startRadius = Tool.dp2px(Setup.appSettings().desktopIconSize / 2)
 
         val animDuration = Setup.appSettings().animationSpeed * 10L
-        _folderAnimator = ViewAnimationUtils.createCircularReveal(_popupCard, _cx, _cy, startRadius, finalRadius)
+        _folderAnimator = android.view.ViewAnimationUtils.createCircularReveal(_popupCard, _cx, _cy, startRadius.toFloat(), finalRadius.toFloat())
         _folderAnimator?.startDelay = 0
         _folderAnimator?.interpolator = AccelerateDecelerateInterpolator()
         _folderAnimator?.duration = animDuration
@@ -250,7 +250,7 @@ class GroupPopupView : RevealFrameLayout {
 
         val startRadius = Tool.dp2px(Setup.appSettings().desktopIconSize / 2)
         val finalRadius = maxOf(_popupCard.width, _popupCard.height)
-        _folderAnimator = ViewAnimationUtils.createCircularReveal(_popupCard, _cx, _cy, finalRadius, startRadius)
+        _folderAnimator = android.view.ViewAnimationUtils.createCircularReveal(_popupCard, _cx, _cy, finalRadius.toFloat(), startRadius.toFloat())
         _folderAnimator?.startDelay = 1 + animDuration / 2
         _folderAnimator?.interpolator = AccelerateDecelerateInterpolator()
         _folderAnimator?.duration = animDuration
@@ -280,8 +280,8 @@ class GroupPopupView : RevealFrameLayout {
     private fun removeItem(context: Context, currentItem: Item, dragOutItem: Item, currentView: AppItemView) {
         currentItem.groupItems.remove(dragOutItem)
 
-        HomeActivity._db.saveItem(dragOutItem, ItemState.Visible)
-        HomeActivity._db.saveItem(currentItem)
+        Setup.dataManager().saveItem(dragOutItem, ItemState.Visible)
+        Setup.dataManager().saveItem(currentItem)
 
         currentView.icon = GroupDrawable(context, currentItem, Setup.appSettings().desktopIconSize)
     }
@@ -289,8 +289,8 @@ class GroupPopupView : RevealFrameLayout {
     private fun deleteItem(context: Context, currentItem: Item, dragOutItem: Item, currentView: AppItemView) {
         currentItem.groupItems.remove(dragOutItem)
 
-        HomeActivity._db.deleteItem(dragOutItem, false)
-        HomeActivity._db.saveItem(currentItem)
+        Setup.dataManager().deleteItem(dragOutItem, false)
+        Setup.dataManager().saveItem(currentItem)
 
         currentView.icon = GroupDrawable(context, currentItem, Setup.appSettings().desktopIconSize)
     }
@@ -299,16 +299,19 @@ class GroupPopupView : RevealFrameLayout {
         if (currentItem.groupItems.size == 1) {
             val app = Setup.appLoader().findItemApp(currentItem.groupItems[0])
             if (app != null) {
-                val item = HomeActivity._db.getItem(currentItem.groupItems[0].id)
+                val item = Setup.dataManager().getItem(currentItem.groupItems[0].id)
                 item.x = currentItem.x
                 item.y = currentItem.y
                 item._location = ItemPosition.Desktop
 
                 // update db
-                HomeActivity._db.saveItem(item)
-                HomeActivity._db.saveItem(item, HomeActivity._launcher.desktop.currentItem, ItemPosition.Desktop)
-                HomeActivity._db.saveItem(item, ItemState.Visible)
-                HomeActivity._db.deleteItem(currentItem, false)
+                Setup.dataManager().saveItem(item)
+                val launcher = Tool.getLauncher(currentView.context)
+                if (launcher != null) {
+                    Setup.dataManager().saveItem(item, launcher.desktop.currentItem, ItemPosition.Desktop)
+                }
+                Setup.dataManager().saveItem(item, ItemState.Visible)
+                Setup.dataManager().deleteItem(currentItem, false)
 
                 // update launcher
                 callback.removeItem(currentView, false)

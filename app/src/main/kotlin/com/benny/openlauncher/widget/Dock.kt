@@ -5,7 +5,7 @@ import android.graphics.Point
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import com.benny.openlauncher.activity.HomeActivity
+import com.benny.openlauncher.interfaces.Launcher
 import com.benny.openlauncher.manager.Setup
 import com.benny.openlauncher.model.Item
 import com.benny.openlauncher.util.Definitions.ItemPosition
@@ -17,7 +17,7 @@ import com.benny.openlauncher.viewutil.ItemViewFactory
 
 class Dock(context: Context, attr: AttributeSet) : CellContainer(context, attr), DesktopCallback {
 
-    private lateinit var homeActivity: HomeActivity
+    private lateinit var launcher: Launcher
     private val coordinate = Point()
     private val previousDragPoint = Point()
 
@@ -32,7 +32,7 @@ class Dock(context: Context, attr: AttributeSet) : CellContainer(context, attr),
         val columns = Setup.appSettings().dockColumnCount
         val rows = Setup.appSettings().dockRowCount
         setGridSize(columns, rows)
-        val dockItems = HomeActivity._db.dock
+        val dockItems = Setup.dataManager().dock
         removeAllViews()
         for (item in dockItems) {
             if (item._x + item._spanX <= columns && item._y + item._spanY <= rows) {
@@ -59,18 +59,17 @@ class Dock(context: Context, attr: AttributeSet) : CellContainer(context, attr),
             MotionEvent.ACTION_UP -> {
                 if (startPosY - ev.y > 150.0f && Setup.appSettings().gestureDockSwipeUp) {
                     var point = Point(ev.x.toInt(), ev.y.toInt())
-                    point = Tool.convertPoint(point, this, homeActivity.appDrawerController)
+                    point = Tool.convertPoint(point, this, launcher.appDrawerController)
                     if (Setup.appSettings().gestureFeedback) {
                         Tool.vibrate(this)
                     }
-                    homeActivity.openAppDrawer(this, point.x, point.y)
+                    launcher.openAppDrawer(this, point.x, point.y)
                 }
             }
         }
     }
 
     fun updateIconProjection(x: Int, y: Int) {
-        val launcher = homeActivity
         val dragNDropView = launcher.itemOptionView
         val state = peekItemAndSwap(x, y, coordinate)
         if (coordinate != previousDragPoint) {
@@ -137,7 +136,7 @@ class Dock(context: Context, attr: AttributeSet) : CellContainer(context, attr),
         val itemView = ItemViewFactory.getItemView(context, this, Action.DESKTOP, item, isDockShowLabel())
         if (itemView == null) {
             // TODO see if this fixes SD card bug
-            //HomeActivity._db.deleteItem(item, true)
+            //Setup.dataManager().deleteItem(item, true)
             return false
         }
         item._location = ItemPosition.Dock
@@ -182,8 +181,8 @@ class Dock(context: Context, attr: AttributeSet) : CellContainer(context, attr),
         }
     }
 
-    fun setHome(homeActivity: HomeActivity) {
-        this.homeActivity = homeActivity
+    fun setHome(launcher: Launcher) {
+        this.launcher = launcher
     }
 
     private fun isDockShowLabel(): Boolean = Setup.appSettings().dockShowLabel

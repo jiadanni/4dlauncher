@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.preference.Preference
 import com.benny.openlauncher.R
 import com.benny.openlauncher.activity.HideAppsActivity
-import com.benny.openlauncher.activity.HomeActivity
 import com.benny.openlauncher.activity.MoreInfoActivity
 import com.benny.openlauncher.util.AppSettings
 import com.benny.openlauncher.widget.AppDrawerController
@@ -20,8 +19,7 @@ class SettingsMasterFragment : SettingsBaseFragment() {
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         super.onPreferenceTreeClick(preference)
-        val homeActivity = HomeActivity._launcher
-        val key = ContextUtils(homeActivity).getResId(ContextUtils.ResType.STRING, preference.key)
+        val key = ContextUtils(requireContext()).getResId(ContextUtils.ResType.STRING, preference.key)
 
         return when (key) {
             R.string.pref_key__cat_hide_apps -> {

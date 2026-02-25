@@ -100,7 +100,7 @@ class Desktop : ViewPager, DesktopCallback {
     inner class DesktopAdapter(private val _desktop: Desktop) : PagerAdapter() {
         init {
             _desktop.pages.clear()
-            var count = HomeActivity._db.getDesktop().size
+            var count = Setup.dataManager().getDesktop().size
             if (count == 0) count++
             for (i in 0 until count) {
                 _desktop.pages.add(getItemLayout())
@@ -124,7 +124,7 @@ class Desktop : ViewPager, DesktopCallback {
             layout.setOnLongClickListener {
                 enterDesktopEditMode()
                 if (Setup.appSettings().getGestureFeedback()) {
-                    Tool.vibrate(HomeActivity._launcher.getDesktop())
+                    Tool.vibrate(_desktop)
                 }
                 true
             }
@@ -133,7 +133,7 @@ class Desktop : ViewPager, DesktopCallback {
 
         fun addPageLeft() {
             // Shift pages to the right (including home page)
-            HomeActivity._db.addPage(0)
+            Setup.dataManager().addPage(0)
             Setup.appSettings().setDesktopPageCurrent(Setup.appSettings().getDesktopPageCurrent() + 1)
 
             _desktop.pages.add(0, getItemLayout())
@@ -150,13 +150,13 @@ class Desktop : ViewPager, DesktopCallback {
                 for (view in _desktop.pages[position].getAllCells()) {
                     val item = view.tag
                     if (item is Item) {
-                        HomeActivity._db.deleteItem(item, true)
+                        Setup.dataManager().deleteItem(item, true)
                     }
                 }
             }
 
             // Shift pages to the left (including home page)
-            HomeActivity._db.removePage(position)
+            Setup.dataManager().removePage(position)
             if (Setup.appSettings().getDesktopPageCurrent() > position) {
                 Setup.appSettings().setDesktopPageCurrent(Setup.appSettings().getDesktopPageCurrent() - 1)
             }
@@ -257,7 +257,7 @@ class Desktop : ViewPager, DesktopCallback {
     private fun addItemsToPage() {
         val columns = Setup.appSettings().getDesktopColumnCount()
         val rows = Setup.appSettings().getDesktopRowCount()
-        val desktopItems = HomeActivity._db.getDesktop()
+        val desktopItems = Setup.dataManager().getDesktop()
         for (pageCount in desktopItems.indices) {
             val page = desktopItems[pageCount]
             _pages[pageCount].removeAllViews()
@@ -312,8 +312,8 @@ class Desktop : ViewPager, DesktopCallback {
     }
 
     fun updateIconProjection(x: Int, y: Int) {
-        val launcher = HomeActivity.Companion.getLauncher()
-        val dragNDropView = launcher?.getItemOptionView()
+        val launcher = Tool.getLauncher(context)
+        val dragNDropView = launcher?.itemOptionView
         val state = currentPage.peekItemAndSwap(x, y, _coordinate)
         if (_coordinate != _previousDragPoint) {
             dragNDropView?.cancelFolderPreview()
@@ -377,7 +377,7 @@ class Desktop : ViewPager, DesktopCallback {
             // TODO see if this fixes SD card bug
             // apps that are located on SD card disappear on reboot
             // might be from this line of code so comment out for now
-            //HomeActivity._db.deleteItem(item, true)
+            //Setup.dataManager().deleteItem(item, true)
             return false
         }
         item._location = ItemPosition.Desktop
@@ -460,7 +460,7 @@ class Desktop : ViewPager, DesktopCallback {
                     // Require horizontal swipe to be dominant over vertical
                     if (deltaX > 150 && Math.abs(deltaY) < Math.abs(deltaX) / 2) {
                         _isFeedSwipeDetected = true
-                        HomeActivity._launcher?.openFeed()
+                        Tool.getLauncher(context)?.openFeed()
                         return true
                     }
                 }
@@ -506,15 +506,13 @@ class Desktop : ViewPager, DesktopCallback {
                         group.getGroupItems().add(dropItem)
                         group._x = item._x
                         group._y = item._y
-                        HomeActivity._db.saveItem(dropItem, page, ItemPosition.Group)
-                        HomeActivity._db.saveItem(item, ItemState.Hidden)
-                        HomeActivity._db.saveItem(dropItem, ItemState.Hidden)
-                        HomeActivity._db.saveItem(group, page, itemPosition)
+                        Setup.dataManager().saveItem(dropItem, page, ItemPosition.Group)
+                        Setup.dataManager().saveItem(item, ItemState.Hidden)
+                        Setup.dataManager().saveItem(dropItem, ItemState.Hidden)
+                        Setup.dataManager().saveItem(group, page, itemPosition)
                         callback.addItemToPage(group, page)
-                        HomeActivity.Companion.getLauncher()?.let { launcher ->
-                            launcher.getDesktop().consumeLastItem()
-                            launcher.getDock().consumeLastItem()
-                        }
+                        homeActivity.desktop.consumeLastItem()
+                        homeActivity.dock.consumeLastItem()
                         return true
                     } else if (Type.GROUP == dropItem._type && dropItem.getGroupItems().size < GroupPopupView.GroupDef._maxItem) {
                         itemView?.let { parent.removeView(it) }
@@ -525,14 +523,12 @@ class Desktop : ViewPager, DesktopCallback {
                         group.getGroupItems().addAll(dropItem.getGroupItems())
                         group._x = item._x
                         group._y = item._y
-                        HomeActivity._db.deleteItem(dropItem, false)
-                        HomeActivity._db.saveItem(item, ItemState.Hidden)
-                        HomeActivity._db.saveItem(group, page, itemPosition)
+                        Setup.dataManager().deleteItem(dropItem, false)
+                        Setup.dataManager().saveItem(item, ItemState.Hidden)
+                        Setup.dataManager().saveItem(group, page, itemPosition)
                         callback.addItemToPage(group, page)
-                        HomeActivity.Companion.getLauncher()?.let { launcher ->
-                            launcher.getDesktop().consumeLastItem()
-                            launcher.getDock().consumeLastItem()
-                        }
+                        homeActivity.desktop.consumeLastItem()
+                        homeActivity.dock.consumeLastItem()
                         return true
                     }
                 }
@@ -541,25 +537,21 @@ class Desktop : ViewPager, DesktopCallback {
                         itemView?.let { parent.removeView(it) }
                         dropItem._location = ItemPosition.Group
                         item.getGroupItems().add(dropItem)
-                        HomeActivity._db.saveItem(dropItem, page, ItemPosition.Group)
-                        HomeActivity._db.saveItem(dropItem, ItemState.Hidden)
-                        HomeActivity._db.saveItem(item, page, itemPosition)
+                        Setup.dataManager().saveItem(dropItem, page, ItemPosition.Group)
+                        Setup.dataManager().saveItem(dropItem, ItemState.Hidden)
+                        Setup.dataManager().saveItem(item, page, itemPosition)
                         callback.addItemToPage(item, page)
-                        HomeActivity.Companion.getLauncher()?.let { launcher ->
-                            launcher.getDesktop().consumeLastItem()
-                            launcher.getDock().consumeLastItem()
-                        }
+                        homeActivity.desktop.consumeLastItem()
+                        homeActivity.dock.consumeLastItem()
                         return true
                     } else if (Type.GROUP == dropItem._type && item.getGroupItems().size < GroupPopupView.GroupDef._maxItem && dropItem.getGroupItems().size < GroupPopupView.GroupDef._maxItem) {
                         itemView?.let { parent.removeView(it) }
                         item.getGroupItems().addAll(dropItem.getGroupItems())
-                        HomeActivity._db.saveItem(item, page, itemPosition)
-                        HomeActivity._db.deleteItem(dropItem, false)
+                        Setup.dataManager().saveItem(item, page, itemPosition)
+                        Setup.dataManager().deleteItem(dropItem, false)
                         callback.addItemToPage(item, page)
-                        HomeActivity.Companion.getLauncher()?.let { launcher ->
-                            launcher.getDesktop().consumeLastItem()
-                            launcher.getDock().consumeLastItem()
-                        }
+                        homeActivity.desktop.consumeLastItem()
+                        homeActivity.dock.consumeLastItem()
                         return true
                     }
                 }

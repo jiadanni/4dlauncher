@@ -60,13 +60,6 @@ class MinibarEditActivity : ColorActivity(), ItemTouchCallback {
         enableSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
             buttonView.setText(if (isChecked) R.string.on else R.string.off)
             AppSettings.get().minibarEnable = isChecked
-            HomeActivity.launcher?.let { launcher ->
-                launcher.closeAppDrawer()
-                launcher.drawerLayout.setDrawerLockMode(
-                    if (isChecked) DrawerLayout.LOCK_MODE_UNLOCKED
-                    else DrawerLayout.LOCK_MODE_LOCKED_CLOSED
-                )
-            }
         }
 
         setResult(RESULT_OK)
@@ -84,7 +77,6 @@ class MinibarEditActivity : ColorActivity(), ItemTouchCallback {
     }
 
     override fun onStop() {
-        HomeActivity.launcher?.initMinibar()
         super.onStop()
     }
 

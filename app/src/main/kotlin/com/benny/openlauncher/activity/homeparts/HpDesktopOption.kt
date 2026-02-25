@@ -58,7 +58,7 @@ class HpDesktopOption(
         data ?: return
         val extras = data.extras ?: return
         val appWidgetId = extras.getInt("appWidgetId", -1)
-        val appWidgetInfo = HomeActivity._appWidgetManager.getAppWidgetInfo(appWidgetId)
+        val appWidgetInfo = AppWidgetManager.getInstance(homeActivity).getAppWidgetInfo(appWidgetId)
         if (appWidgetInfo.configure != null) {
             val intent = Intent("android.appwidget.action.APPWIDGET_CONFIGURE").apply {
                 component = appWidgetInfo.configure
@@ -74,7 +74,7 @@ class HpDesktopOption(
         data ?: return
         val extras = data.extras ?: return
         val appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
-        val appWidgetInfo = HomeActivity._appWidgetManager.getAppWidgetInfo(appWidgetId)
+        val appWidgetInfo = AppWidgetManager.getInstance(homeActivity).getAppWidgetInfo(appWidgetId)
         val item = Item.newWidgetItem(appWidgetInfo.provider, appWidgetId)
         val desktop = homeActivity.desktop
         val pages = desktop.pages
@@ -87,7 +87,7 @@ class HpDesktopOption(
             item._y = point.y
 
             // add item to database
-            HomeActivity._db.saveItem(item, desktop.currentItem, Definitions.ItemPosition.Desktop)
+            Setup.dataManager().saveItem(item, desktop.currentItem, Definitions.ItemPosition.Desktop)
             desktop.addItemToPage(item, desktop.currentItem)
         } else {
             Tool.toast(homeActivity, R.string.toast_not_enough_space)

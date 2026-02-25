@@ -159,7 +159,7 @@ class HpDragOption {
                     homeActivity.desktop.consumeLastItem()
                     homeActivity.dock.consumeLastItem()
                     // add the item to the database
-                    HomeActivity._db.saveItem(item, homeActivity.desktop.currentItem, Definitions.ItemPosition.Desktop)
+                    Setup.dataManager().saveItem(item, homeActivity.desktop.currentItem, Definitions.ItemPosition.Desktop)
                     homeActivity.desktop.updateDesktop()
                 } else {
                     val pos = Point()
@@ -235,7 +235,7 @@ class HpDragOption {
                     homeActivity.dock.consumeLastItem()
 
                     // add the item to the database
-                    HomeActivity._db.saveItem(item, 0, Definitions.ItemPosition.Dock)
+                    Setup.dataManager().saveItem(item, 0, Definitions.ItemPosition.Dock)
                 } else {
                     val pos = Point()
                     homeActivity.dock.touchPosToCoordinate(pos, x, y, item._spanX, item._spanY, false)

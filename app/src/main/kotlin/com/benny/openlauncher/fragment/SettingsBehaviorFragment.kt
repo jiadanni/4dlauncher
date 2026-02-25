@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.preference.Preference
 import com.benny.openlauncher.R
-import com.benny.openlauncher.activity.HomeActivity
 import com.benny.openlauncher.util.AppManager
 import com.benny.openlauncher.util.AppSettings
 import com.benny.openlauncher.util.LauncherAction
@@ -20,8 +19,7 @@ class SettingsBehaviorFragment : SettingsBaseFragment() {
     }
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
-        val homeActivity = HomeActivity._launcher
-        val key = ContextUtils(homeActivity).getResId(ContextUtils.ResType.STRING, preference.key)
+        val key = ContextUtils(requireContext()).getResId(ContextUtils.ResType.STRING, preference.key)
 
         when (key) {
             R.string.pref_key__gesture_double_tap,

@@ -48,7 +48,7 @@ class HpItemOption(
                 dock.removeItem(view, true)
             }
         }
-        HomeActivity._db.deleteItem(item, true)
+        Setup.dataManager().deleteItem(item, true)
     }
 
     fun onInfoItem(item: Item) {

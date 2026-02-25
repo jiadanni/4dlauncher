@@ -10,8 +10,8 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.provider.Settings
+import com.benny.openlauncher.AppObject
 import com.benny.openlauncher.R
-import com.benny.openlauncher.activity.HomeActivity
 import com.benny.openlauncher.activity.MinibarEditActivity
 import com.benny.openlauncher.activity.SettingsActivity
 import com.benny.openlauncher.viewutil.DialogHelper
@@ -26,17 +26,17 @@ object LauncherAction {
 
     @JvmField
     val actionDisplayItems = arrayOf(
-        ActionDisplayItem(Action.EditMinibar, HomeActivity._launcher.resources.getString(R.string.minibar_title__edit_minibar), HomeActivity._launcher.resources.getString(R.string.minibar_summary__edit_minibar), R.drawable.ic_edit, 98),
-        ActionDisplayItem(Action.SetWallpaper, HomeActivity._launcher.resources.getString(R.string.minibar_title__set_wallpaper), HomeActivity._launcher.resources.getString(R.string.minibar_summary__set_wallpaper), R.drawable.ic_photo, 36),
-        ActionDisplayItem(Action.LockScreen, HomeActivity._launcher.resources.getString(R.string.minibar_title__lock_screen), HomeActivity._launcher.resources.getString(R.string.minibar_summary__lock_screen), R.drawable.ic_lock, 24),
-        ActionDisplayItem(Action.LauncherSettings, HomeActivity._launcher.resources.getString(R.string.minibar_title__launcher_settings), HomeActivity._launcher.resources.getString(R.string.minibar_summary__launcher_settings), R.drawable.ic_settings, 50),
-        ActionDisplayItem(Action.VolumeDialog, HomeActivity._launcher.resources.getString(R.string.minibar_title__volume_dialog), HomeActivity._launcher.resources.getString(R.string.minibar_summary__volume_dialog), R.drawable.ic_volume, 71),
-        ActionDisplayItem(Action.DeviceSettings, HomeActivity._launcher.resources.getString(R.string.minibar_title__device_settings), HomeActivity._launcher.resources.getString(R.string.minibar_summary__device_settings), R.drawable.ic_android, 25),
-        ActionDisplayItem(Action.AppDrawer, HomeActivity._launcher.resources.getString(R.string.minibar_title__app_drawer), HomeActivity._launcher.resources.getString(R.string.minibar_summary__app_drawer), R.drawable.ic_apps, 73),
-        ActionDisplayItem(Action.SearchBar, HomeActivity._launcher.resources.getString(R.string.minibar_title__search_bar), HomeActivity._launcher.resources.getString(R.string.minibar_summary__search_bar), R.drawable.ic_search, 89),
-        ActionDisplayItem(Action.MobileNetworkSettings, HomeActivity._launcher.resources.getString(R.string.minibar_title__mobile_network), HomeActivity._launcher.resources.getString(R.string.minibar_summary__mobile_network), R.drawable.ic_network, 46),
-        ActionDisplayItem(Action.ShowNotifications, HomeActivity._launcher.resources.getString(R.string.minibar_title__notification_bar), HomeActivity._launcher.resources.getString(R.string.minibar_summary__notification_bar), R.drawable.ic_notifications, 46),
-        ActionDisplayItem(Action.Camera, HomeActivity._launcher.resources.getString(R.string.minibar_title__camera), HomeActivity._launcher.resources.getString(R.string.minibar_summary__camera), R.drawable.ic_camera_, 13)
+        ActionDisplayItem(Action.EditMinibar, AppObject.get().resources.getString(R.string.minibar_title__edit_minibar), AppObject.get().resources.getString(R.string.minibar_summary__edit_minibar), R.drawable.ic_edit, 98),
+        ActionDisplayItem(Action.SetWallpaper, AppObject.get().resources.getString(R.string.minibar_title__set_wallpaper), AppObject.get().resources.getString(R.string.minibar_summary__set_wallpaper), R.drawable.ic_photo, 36),
+        ActionDisplayItem(Action.LockScreen, AppObject.get().resources.getString(R.string.minibar_title__lock_screen), AppObject.get().resources.getString(R.string.minibar_summary__lock_screen), R.drawable.ic_lock, 24),
+        ActionDisplayItem(Action.LauncherSettings, AppObject.get().resources.getString(R.string.minibar_title__launcher_settings), AppObject.get().resources.getString(R.string.minibar_summary__launcher_settings), R.drawable.ic_settings, 50),
+        ActionDisplayItem(Action.VolumeDialog, AppObject.get().resources.getString(R.string.minibar_title__volume_dialog), AppObject.get().resources.getString(R.string.minibar_summary__volume_dialog), R.drawable.ic_volume, 71),
+        ActionDisplayItem(Action.DeviceSettings, AppObject.get().resources.getString(R.string.minibar_title__device_settings), AppObject.get().resources.getString(R.string.minibar_summary__device_settings), R.drawable.ic_android, 25),
+        ActionDisplayItem(Action.AppDrawer, AppObject.get().resources.getString(R.string.minibar_title__app_drawer), AppObject.get().resources.getString(R.string.minibar_summary__app_drawer), R.drawable.ic_apps, 73),
+        ActionDisplayItem(Action.SearchBar, AppObject.get().resources.getString(R.string.minibar_title__search_bar), AppObject.get().resources.getString(R.string.minibar_summary__search_bar), R.drawable.ic_search, 89),
+        ActionDisplayItem(Action.MobileNetworkSettings, AppObject.get().resources.getString(R.string.minibar_title__mobile_network), AppObject.get().resources.getString(R.string.minibar_summary__mobile_network), R.drawable.ic_network, 46),
+        ActionDisplayItem(Action.ShowNotifications, AppObject.get().resources.getString(R.string.minibar_title__notification_bar), AppObject.get().resources.getString(R.string.minibar_summary__notification_bar), R.drawable.ic_notifications, 46),
+        ActionDisplayItem(Action.Camera, AppObject.get().resources.getString(R.string.minibar_title__camera), AppObject.get().resources.getString(R.string.minibar_summary__camera), R.drawable.ic_camera_, 13)
     )
 
     @JvmField
@@ -116,10 +116,10 @@ object LauncherAction {
                 }
             }
             Action.AppDrawer -> {
-                HomeActivity._launcher.openAppDrawer()
+                Tool.getLauncher(context)?.openAppDrawer()
             }
             Action.SearchBar -> {
-                HomeActivity._launcher.searchBar.searchButton.performClick()
+                Tool.getLauncher(context)?.searchBar?.searchButton?.performClick()
             }
             Action.MobileNetworkSettings -> {
                 context.startActivity(Intent(Settings.ACTION_DATA_ROAMING_SETTINGS))

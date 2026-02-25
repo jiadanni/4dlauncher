@@ -28,6 +28,7 @@ import com.benny.openlauncher.activity.homeparts.HpSearchBar
 import com.benny.openlauncher.feed.FeedPermissionManager
 import com.benny.openlauncher.interfaces.AppDeleteListener
 import com.benny.openlauncher.interfaces.AppUpdateListener
+import com.benny.openlauncher.interfaces.Launcher
 import com.benny.openlauncher.manager.Setup
 import com.benny.openlauncher.model.App
 import com.benny.openlauncher.model.Item
@@ -57,7 +58,7 @@ import com.benny.openlauncher.widget.SearchBar
 import com.jakewharton.threetenabp.AndroidThreeTen
 import net.gsantner.opoc.util.ContextUtils
 
-class HomeActivity : Activity(), OnDesktopEditListener {
+class HomeActivity : Activity(), OnDesktopEditListener, Launcher {
 
     private var cx: Int = 0
     private var cy: Int = 0
@@ -66,22 +67,22 @@ class HomeActivity : Activity(), OnDesktopEditListener {
     private lateinit var timeChangedReceiver: BroadcastReceiver
     private lateinit var feedPermissionManager: FeedPermissionManager
 
-    val drawerLayout: DrawerLayout
+    override val drawerLayout: DrawerLayout
         get() = findViewById(R.id.drawer_layout)
 
-    val desktop: Desktop
+    override val desktop: Desktop
         get() = findViewById(R.id.desktop)
 
-    val dock: Dock
+    override val dock: Dock
         get() = findViewById(R.id.dock)
 
-    val appDrawerController: AppDrawerController
+    override val appDrawerController: AppDrawerController
         get() = findViewById(R.id.appDrawerController)
 
-    val groupPopup: GroupPopupView
+    override val groupPopup: GroupPopupView
         get() = findViewById(R.id.groupPopup)
 
-    val searchBar: SearchBar
+    override val searchBar: SearchBar
         get() = findViewById(R.id.searchBar)
 
     val background: View
@@ -93,7 +94,7 @@ class HomeActivity : Activity(), OnDesktopEditListener {
     val desktopOptionView: DesktopOptionView
         get() = findViewById(R.id.desktop_option)
 
-    val itemOptionView: ItemOptionView
+    override val itemOptionView: ItemOptionView
         get() = findViewById(R.id.item_option)
 
     val minibarFrame: FrameLayout
@@ -109,7 +110,6 @@ class HomeActivity : Activity(), OnDesktopEditListener {
         get() = findViewById(R.id.feed_view)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Companion.launcher = this
         AndroidThreeTen.init(this)
 
         val appSettings = AppSettings.get()
@@ -121,9 +121,6 @@ class HomeActivity : Activity(), OnDesktopEditListener {
         if (!Setup.wasInitialised()) {
             Setup.init(HpInitSetup(this))
         }
-
-        Companion.launcher = this
-        _db = Setup.dataManager()
 
         setContentView(layoutInflater.inflate(R.layout.activity_home, null))
 
@@ -161,7 +158,7 @@ class HomeActivity : Activity(), OnDesktopEditListener {
             Setup.appSettings().isAppShowIntro = false
             val appDrawerBtnItem = Item.newActionItem(8)
             appDrawerBtnItem._x = 2
-            _db.saveItem(appDrawerBtnItem, 0, ItemPosition.Dock)
+            Setup.dataManager().saveItem(appDrawerBtnItem, 0, ItemPosition.Dock)
         }
 
         Setup.appLoader().addUpdateListener(object : AppUpdateListener {
@@ -217,7 +214,7 @@ class HomeActivity : Activity(), OnDesktopEditListener {
         initMinibar()
     }
 
-    fun initMinibar() {
+    override fun initMinibar() {
         val items = AppSettings.get().minibarArrangement
         val minibar = findViewById<MinibarView>(R.id.minibar)
         minibar.adapter = MinibarAdapter(this, items)
@@ -432,7 +429,6 @@ class HomeActivity : Activity(), OnDesktopEditListener {
 
     override fun onStart() {
         _appWidgetHost.startListening()
-        _launcher = this
 
         super.onStart()
     }
@@ -501,7 +497,6 @@ class HomeActivity : Activity(), OnDesktopEditListener {
     override fun onResume() {
         super.onResume()
         _appWidgetHost.startListening()
-        _launcher = this
 
         // handle restart if something needs to be reset
         val appSettings = Setup.appSettings()
@@ -516,6 +511,9 @@ class HomeActivity : Activity(), OnDesktopEditListener {
             checkNotificationPermissions()
         }
 
+        initMinibar()
+        initSettings()
+
         // handle launcher rotation
         requestedOrientation = when (appSettings.desktopOrientationMode) {
             2 -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
@@ -528,7 +526,6 @@ class HomeActivity : Activity(), OnDesktopEditListener {
 
     override fun onDestroy() {
         _appWidgetHost.stopListening()
-        _launcher = null
 
         unregisterReceiver(appUpdateReceiver)
         unregisterReceiver(timeChangedReceiver)
@@ -564,7 +561,7 @@ class HomeActivity : Activity(), OnDesktopEditListener {
         openAppDrawer(null, 0, 0)
     }
 
-    fun openAppDrawer(view: View?, x: Int, y: Int) {
+    override fun openAppDrawer(view: View?, x: Int, y: Int) {
         if (!(x > 0 && y > 0) && view != null) {
             val pos = IntArray(2)
             view.getLocationInWindow(pos)
@@ -585,11 +582,11 @@ class HomeActivity : Activity(), OnDesktopEditListener {
         appDrawerController.open(cx, cy)
     }
 
-    fun closeAppDrawer() {
+    override fun closeAppDrawer() {
         appDrawerController.close(cx, cy)
     }
 
-    fun openFeed() {
+    override fun openFeed() {
         // Check if we have all required permissions
         if (FeedPermissionManager.hasAllPermissions(this)) {
             // All permissions granted, open the feed
@@ -666,16 +663,6 @@ class HomeActivity : Activity(), OnDesktopEditListener {
         @JvmStatic
         var _itemTouchY = 0f
 
-        // static launcher variables
-        @JvmStatic
-        var _launcher: HomeActivity? = null
-
-        @JvmStatic
-        lateinit var _db: DatabaseHelper
-
-        @JvmStatic
-        var _desktopOption: HpDesktopOption? = null
-
         // receiver variables
         private val _appUpdateIntentFilter = IntentFilter()
         private val _timeChangedIntentFilter = IntentFilter()
@@ -690,11 +677,5 @@ class HomeActivity : Activity(), OnDesktopEditListener {
             _appUpdateIntentFilter.addAction(Intent.ACTION_PACKAGE_CHANGED)
         }
 
-        @JvmStatic
-        var launcher: HomeActivity?
-            get() = _launcher
-            set(value) {
-                _launcher = value
-            }
     }
 }

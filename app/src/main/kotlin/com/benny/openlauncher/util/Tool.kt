@@ -25,6 +25,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.benny.openlauncher.activity.HomeActivity
+import com.benny.openlauncher.interfaces.Launcher
 import com.benny.openlauncher.manager.Setup
 import com.benny.openlauncher.model.App
 import java.io.File
@@ -152,9 +153,18 @@ object Tool {
         return target.coerceIn(min, max)
     }
 
+    fun getLauncher(context: Context?): Launcher? {
+        if (context == null) return null
+        if (context is Launcher) return context
+        if (context is android.content.ContextWrapper) return getLauncher(context.baseContext)
+        return null
+    }
+
     fun startApp(context: Context, app: App, view: View?) {
-        val launcher = HomeActivity._launcher
-        launcher.onStartApp(context, app, view)
+        val launcher = getLauncher(context)
+        if (launcher is HomeActivity) {
+            launcher.onStartApp(context, app, view)
+        }
     }
 
     fun drawableToBitmap(drawable: Drawable?): Bitmap? {

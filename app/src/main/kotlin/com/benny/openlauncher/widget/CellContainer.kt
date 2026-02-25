@@ -318,7 +318,7 @@ open class CellContainer @JvmOverloads constructor(
         }
 
         // Animating alpha and drawing projected image
-        HomeActivity.launcher?.let { homeActivity ->
+        Tool.getLauncher(context)?.let { homeActivity ->
             if (homeActivity.itemOptionView.dragExceedThreshold && currentOutlineCoordinate.x != -1 && currentOutlineCoordinate.y != -1) {
                 if (outlinePaint.alpha != 160) {
                     outlinePaint.alpha = min(outlinePaint.alpha + 20, 160)

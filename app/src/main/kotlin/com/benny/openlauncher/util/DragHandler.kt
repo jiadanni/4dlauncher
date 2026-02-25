@@ -17,7 +17,7 @@ object DragHandler {
     fun startDrag(view: View, item: Item, action: DragAction.Action, desktopCallback: DesktopCallback?) {
         _cachedDragBitmap = loadBitmapFromView(view)
 
-        HomeActivity.launcher?.itemOptionView?.startDragNDropOverlay(view, item, action)
+        Tool.getLauncher(view.context)?.itemOptionView?.startDragNDropOverlay(view, item, action)
         desktopCallback?.setLastItem(item, view)
     }
 
@@ -25,11 +25,12 @@ object DragHandler {
     fun getLongClick(item: Item, action: DragAction.Action, desktopCallback: DesktopCallback?): View.OnLongClickListener {
         return View.OnLongClickListener { view ->
             if (Setup.appSettings().desktopLock) {
-                if (HomeActivity.launcher != null && action != DragAction.Action.SEARCH) {
+                val launcher = Tool.getLauncher(view.context)
+                if (launcher != null && action != DragAction.Action.SEARCH) {
                     if (Setup.appSettings().gestureFeedback) {
                         Tool.vibrate(view)
                     }
-                    HomeActivity._launcher.itemOptionView.showItemPopupForLockedDesktop(item, HomeActivity.launcher)
+                    launcher.itemOptionView.showItemPopupForLockedDesktop(item, launcher as HomeActivity)
                     return@OnLongClickListener true
                 }
                 return@OnLongClickListener false

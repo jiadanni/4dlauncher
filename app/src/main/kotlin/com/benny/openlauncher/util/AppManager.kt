@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.UserHandle
 import android.os.UserManager
 import com.benny.openlauncher.activity.HomeActivity
+import com.benny.openlauncher.manager.Setup
 import com.benny.openlauncher.interfaces.AppDeleteListener
 import com.benny.openlauncher.interfaces.AppUpdateListener
 import com.benny.openlauncher.model.App
@@ -212,7 +213,7 @@ class AppManager(val context: Context) {
             removedApps = getRemovedApps(_apps, appsTemp).toMutableList()
 
             for (app in removedApps) {
-                HomeActivity._db.deleteItems(app)
+                Setup.dataManager().deleteItems(app)
             }
 
             val appSettings = AppSettings.get()
@@ -250,7 +251,7 @@ class AppManager(val context: Context) {
 
         @JvmStatic
         fun getInstance(context: Context): AppManager {
-            return appManager ?: AppManager(context).also { appManager = it }
+            return appManager ?: AppManager(context.applicationContext).also { appManager = it }
         }
 
         @JvmStatic

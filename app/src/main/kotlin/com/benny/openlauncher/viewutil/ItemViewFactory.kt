@@ -98,7 +98,7 @@ object ItemViewFactory {
         if (HomeActivity._appWidgetHost == null) return null
 
         var appWidgetInfo: AppWidgetProviderInfo? =
-            HomeActivity._appWidgetManager.getAppWidgetInfo(item.widgetValue)
+            android.appwidget.AppWidgetManager.getInstance(context).getAppWidgetInfo(item.widgetValue)
 
         // If we can't find the Widget, we don't want to proceed or we'll end up with a phantom on the home screen.
         if (appWidgetInfo == null) {
@@ -107,20 +107,20 @@ object ItemViewFactory {
                 val cn = ComponentName(cnSplit[0], cnSplit[1])
 
                 val appWidgetId = HomeActivity._appWidgetHost.allocateAppWidgetId()
-                if (HomeActivity._appWidgetManager.bindAppWidgetIdIfAllowed(appWidgetId, cn)) {
-                    appWidgetInfo = HomeActivity._appWidgetManager.getAppWidgetInfo(appWidgetId)
+                if (android.appwidget.AppWidgetManager.getInstance(context).bindAppWidgetIdIfAllowed(appWidgetId, cn)) {
+                    appWidgetInfo = android.appwidget.AppWidgetManager.getInstance(context).getAppWidgetInfo(appWidgetId)
                     item.widgetValue = appWidgetId
-                    HomeActivity._db.updateItem(item)
+                    Setup.dataManager().updateItem(item)
                 } else {
                     LOG.error("Unable to bind app widget id: {}; removing from database", cn)
                     HomeActivity._appWidgetHost.deleteAppWidgetId(appWidgetId)
-                    HomeActivity._db.deleteItem(item, false)
+                    Setup.dataManager().deleteItem(item, false)
                     return null
                 }
             } else {
                 // Delete the Widget if we don't have enough information to rehydrate it.
                 LOG.debug("Unable to identify Widget for rehydration; removing from database")
-                HomeActivity._db.deleteItem(item, false)
+                Setup.dataManager().deleteItem(item, false)
                 return null
             }
         }
