@@ -83,8 +83,8 @@ class DatabaseHelper(val context: Context) : SQLiteOpenHelper(context, DATABASE_
     }
 
     fun saveItem(item: Item, page: Int, itemPosition: ItemPosition) {
-        val sqlQuerySpecific = "$SQL_QUERY$TABLE_HOME WHERE $COLUMN_TIME = ${item.id}"
-        val cursor = db.rawQuery(sqlQuerySpecific, null)
+        val sqlQuerySpecific = "$SQL_QUERY$TABLE_HOME WHERE $COLUMN_TIME = ?"
+        val cursor = db.rawQuery(sqlQuerySpecific, arrayOf(item.id.toString()))
         when (cursor.count) {
             0 -> createItem(item, page, itemPosition)
             1 -> updateItem(item, page, itemPosition)
@@ -168,8 +168,8 @@ class DatabaseHelper(val context: Context) : SQLiteOpenHelper(context, DATABASE_
     }
 
     fun getItem(id: Int): Item? {
-        val sqlQuerySpecific = "$SQL_QUERY$TABLE_HOME WHERE $COLUMN_TIME = $id"
-        val cursor = db.rawQuery(sqlQuerySpecific, null)
+        val sqlQuerySpecific = "$SQL_QUERY$TABLE_HOME WHERE $COLUMN_TIME = ?"
+        val cursor = db.rawQuery(sqlQuerySpecific, arrayOf(id.toString()))
         var item: Item? = null
 
         if (cursor.moveToFirst()) {
@@ -207,7 +207,7 @@ class DatabaseHelper(val context: Context) : SQLiteOpenHelper(context, DATABASE_
             }
         }
 
-        db.update(TABLE_HOME, itemValues, "$COLUMN_TIME = ${item.id}", null)
+        db.update(TABLE_HOME, itemValues, "$COLUMN_TIME = ?", arrayOf(item.id.toString()))
     }
 
     // update the state of an item
@@ -218,7 +218,7 @@ class DatabaseHelper(val context: Context) : SQLiteOpenHelper(context, DATABASE_
             put(COLUMN_STATE, state.ordinal)
         }
 
-        db.update(TABLE_HOME, itemValues, "$COLUMN_TIME = ${item.id}", null)
+        db.update(TABLE_HOME, itemValues, "$COLUMN_TIME = ?", arrayOf(item.id.toString()))
     }
 
     // update the fields only used by the database
