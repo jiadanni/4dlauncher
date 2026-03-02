@@ -201,6 +201,9 @@ class ActivityUtils(activity: Activity) : ContextUtils(activity) {
 
     fun showDialogWithRawFileInWebView(fileInRaw: String, @StringRes resTitleId: Int) {
         val wv = WebView(_context!!)
+        wv.settings.javaScriptEnabled = false
+        wv.settings.allowFileAccess = false
+        wv.settings.allowContentAccess = false
         wv.loadUrl("file:///android_res/raw/$fileInRaw")
         val dialog = AlertDialog.Builder(_context!!)
             .setPositiveButton(android.R.string.ok, null)

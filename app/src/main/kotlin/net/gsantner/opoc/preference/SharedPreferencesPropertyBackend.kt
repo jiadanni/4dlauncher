@@ -158,7 +158,11 @@ open class SharedPreferencesPropertyBackend(context: Context, prefAppName: Strin
     }
 
     fun setString(key: String, value: String, vararg pref: SharedPreferences): SharedPreferencesPropertyBackend {
-        gp(*pref).edit().putString(key, value).apply()
+        var finalValue = value
+        if (key == context.getString(com.jiadanni.launcher4d.R.string.pref_key__feed_weather_api_key)) {
+            finalValue = com.jiadanni.launcher4d.util.CryptoUtils.encrypt(value)
+        }
+        gp(*pref).edit().putString(key, finalValue).apply()
         return this
     }
 
@@ -180,7 +184,11 @@ open class SharedPreferencesPropertyBackend(context: Context, prefAppName: Strin
 
     fun getString(key: String, defaultValue: String, vararg pref: SharedPreferences): String {
         try {
-            return gp(*pref).getString(key, defaultValue)!!
+            var finalValue = gp(*pref).getString(key, defaultValue)!!
+            if (key == context.getString(com.jiadanni.launcher4d.R.string.pref_key__feed_weather_api_key) && finalValue != defaultValue) {
+                finalValue = com.jiadanni.launcher4d.util.CryptoUtils.decrypt(finalValue)
+            }
+            return finalValue
         } catch (e: ClassCastException) {
             return defaultValue
         }
