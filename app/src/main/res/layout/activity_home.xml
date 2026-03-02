@@ -16,7 +16,7 @@
             android:layout_gravity="start"
             android:background="@color/colorPrimary">
 
-            <com.benny.openlauncher.widget.MinibarView
+            <com.jiadanni.launcher4d.widget.MinibarView
                 android:id="@+id/minibar"
                 android:layout_width="74dp"
                 android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
         </FrameLayout>
 
         <!-- Feed view on the end (right) side -->
-        <com.benny.openlauncher.widget.FeedView
+        <com.jiadanni.launcher4d.widget.FeedView
             android:id="@+id/feed_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

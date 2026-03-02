@@ -21,7 +21,7 @@ import com.flask.colorpicker.renderer.ColorWheelRenderer;
 import com.flask.colorpicker.slider.AlphaSlider;
 import com.flask.colorpicker.slider.LightnessSlider;
 
-import com.benny.openlauncher.R;
+import com.jiadanni.launcher4d.R;
 
 public class ColorPickerDialogBuilder {
 	private AlertDialog.Builder builder;

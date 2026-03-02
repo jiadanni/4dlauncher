@@ -4,50 +4,50 @@
     android:layout_height="match_parent"
     android:title="@string/pref_title__settings">
 
-    <com.benny.openlauncher.widget.ColorPreferenceCategory android:title="@string/pref_title__interfaces">
+    <com.jiadanni.launcher4d.widget.ColorPreferenceCategory android:title="@string/pref_title__interfaces">
 
         <PreferenceScreen
-            android:fragment="com.benny.openlauncher.fragment.SettingsDesktopFragment"
+            android:fragment="com.jiadanni.launcher4d.fragment.SettingsDesktopFragment"
             android:icon="@drawable/ic_desktop"
             android:key="@string/pref_key__cat_desktop"
             android:title="@string/pref_title__desktop" />
 
         <PreferenceScreen
-            android:fragment="com.benny.openlauncher.fragment.SettingsDockFragment"
+            android:fragment="com.jiadanni.launcher4d.fragment.SettingsDockFragment"
             android:icon="@drawable/ic_dock"
             android:key="@string/pref_key__cat_dock"
             android:title="@string/pref_title__dock" />
 
         <PreferenceScreen
-            android:fragment="com.benny.openlauncher.fragment.SettingsAppDrawerFragment"
+            android:fragment="com.jiadanni.launcher4d.fragment.SettingsAppDrawerFragment"
             android:icon="@drawable/ic_apps"
             android:key="@string/pref_key__cat_app_drawer"
             android:title="@string/pref_title__app_drawer" />
 
         <PreferenceScreen
-            android:fragment="com.benny.openlauncher.fragment.SettingsAppearanceFragment"
+            android:fragment="com.jiadanni.launcher4d.fragment.SettingsAppearanceFragment"
             android:icon="@drawable/ic_palette"
             android:key="@string/pref_key__cat_appearance"
             android:title="@string/pref_title__appearance" />
 
-    </com.benny.openlauncher.widget.ColorPreferenceCategory>
+    </com.jiadanni.launcher4d.widget.ColorPreferenceCategory>
 
-    <com.benny.openlauncher.widget.ColorPreferenceCategory android:title="@string/pref_title__others">
+    <com.jiadanni.launcher4d.widget.ColorPreferenceCategory android:title="@string/pref_title__others">
 
         <PreferenceScreen
-            android:fragment="com.benny.openlauncher.fragment.SettingsFeedFragment"
+            android:fragment="com.jiadanni.launcher4d.fragment.SettingsFeedFragment"
             android:icon="@drawable/ic_info"
             android:key="@string/pref_key__cat_feed"
             android:title="@string/pref_title__feed" />
 
         <PreferenceScreen
-            android:fragment="com.benny.openlauncher.fragment.SettingsBehaviorFragment"
+            android:fragment="com.jiadanni.launcher4d.fragment.SettingsBehaviorFragment"
             android:icon="@drawable/ic_behavior"
             android:key="@string/pref_key__cat_behavior"
             android:title="@string/pref_title__behavior" />
 
         <PreferenceScreen
-            android:fragment="com.benny.openlauncher.fragment.SettingsMiscellaneousFragment"
+            android:fragment="com.jiadanni.launcher4d.fragment.SettingsMiscellaneousFragment"
             android:icon="@drawable/ic_code"
             android:key="@string/pref_key__cat_advanced"
             android:title="@string/pref_title__advanced" />
@@ -62,6 +62,6 @@
             android:key="@string/pref_key__cat_about"
             android:title="@string/pref_title__about" />
 
-    </com.benny.openlauncher.widget.ColorPreferenceCategory>
+    </com.jiadanni.launcher4d.widget.ColorPreferenceCategory>
 
 </PreferenceScreen>

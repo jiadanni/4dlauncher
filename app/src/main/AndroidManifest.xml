@@ -24,7 +24,7 @@
     <application
         android:allowBackup="false"
         android:resizeableActivity="false"
-        android:name="com.benny.openlauncher.AppObject"
+        android:name="com.jiadanni.launcher4d.AppObject"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -37,7 +37,7 @@
         android:enableOnBackInvokedCallback="true">
 
         <activity
-            android:name="com.benny.openlauncher.activity.OnBoardActivity"
+            android:name="com.jiadanni.launcher4d.activity.OnBoardActivity"
             android:exported="true"
             android:clearTaskOnLaunch="true"
             android:label="@string/app_name"
@@ -48,7 +48,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.benny.openlauncher.activity.HomeActivity"
+            android:name="com.jiadanni.launcher4d.activity.HomeActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:launchMode="singleTask"
@@ -69,35 +69,35 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.benny.openlauncher.activity.AutoFinishActivity"
+            android:name="com.jiadanni.launcher4d.activity.AutoFinishActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
         <activity
-            android:name="com.benny.openlauncher.activity.MinibarEditActivity"
+            android:name="com.jiadanni.launcher4d.activity.MinibarEditActivity"
             android:label="@string/minibar"
-            android:parentActivityName="com.benny.openlauncher.activity.HomeActivity"
+            android:parentActivityName="com.jiadanni.launcher4d.activity.HomeActivity"
             android:theme="@style/NormalActivity.Light" />
         <activity
-            android:name="com.benny.openlauncher.activity.SettingsActivity"
+            android:name="com.jiadanni.launcher4d.activity.SettingsActivity"
             android:configChanges="orientation|keyboard|screenSize"
             android:label="@string/pref_title__settings"
             android:theme="@style/NormalActivity.Light" />
         <activity
-            android:name="com.benny.openlauncher.activity.HideAppsActivity"
+            android:name="com.jiadanni.launcher4d.activity.HideAppsActivity"
             android:label="@string/app_name"
             android:theme="@style/NormalActivity.Light" />
         <activity
-            android:name="com.benny.openlauncher.activity.MoreInfoActivity"
-            android:parentActivityName="com.benny.openlauncher.activity.SettingsActivity"
+            android:name="com.jiadanni.launcher4d.activity.MoreInfoActivity"
+            android:parentActivityName="com.jiadanni.launcher4d.activity.SettingsActivity"
             android:theme="@style/NormalActivity.Light">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.benny.openlauncher.activity.SettingsActivity" />
+                android:value="com.jiadanni.launcher4d.activity.SettingsActivity" />
         </activity>
 
 
 
         <receiver
-            android:name="com.benny.openlauncher.receivers.DeviceAdminReceiver"
+            android:name="com.jiadanni.launcher4d.receivers.DeviceAdminReceiver"
             android:exported="true"
             android:permission="android.permission.BIND_DEVICE_ADMIN">
             <intent-filter>
@@ -109,7 +109,7 @@
         </receiver>
 
         <service
-            android:name="com.benny.openlauncher.notifications.NotificationListener"
+            android:name="com.jiadanni.launcher4d.notifications.NotificationListener"
             android:exported="true"
             android:label="@string/icon_badge_service_title"
             android:enabled="true"

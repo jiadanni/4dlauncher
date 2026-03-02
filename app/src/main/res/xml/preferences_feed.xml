@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:title="@string/pref_title__feed">
 
-    <com.benny.openlauncher.widget.ColorPreferenceCategory android:title="@string/pref_title__feed">
+    <com.jiadanni.launcher4d.widget.ColorPreferenceCategory android:title="@string/pref_title__feed">
 
         <EditTextPreference
             android:key="@string/pref_key__feed_weather_api_key"
@@ -14,6 +14,6 @@
             android:defaultValue="@string/pref_default__feed_weather_api_key"
             android:inputType="text" />
 
-    </com.benny.openlauncher.widget.ColorPreferenceCategory>
+    </com.jiadanni.launcher4d.widget.ColorPreferenceCategory>
 
 </PreferenceScreen>

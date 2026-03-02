@@ -22,7 +22,7 @@
         android:summary="@string/pref_summary__gesture_quick_swipe"
         android:title="@string/pref_title__gesture_quick_swipe" />
 
-    <com.benny.openlauncher.widget.ColorPreferenceCategory android:title="@string/pref_title__gestures">
+    <com.jiadanni.launcher4d.widget.ColorPreferenceCategory android:title="@string/pref_title__gestures">
 
         <Preference
             android:defaultValue="0"
@@ -64,6 +64,6 @@
             android:key="@string/pref_key__gesture_two_finger_double_tap"
             android:title="@string/pref_title__gesture_two_finger_double_tap" />
 
-    </com.benny.openlauncher.widget.ColorPreferenceCategory>
+    </com.jiadanni.launcher4d.widget.ColorPreferenceCategory>
 
 </PreferenceScreen>

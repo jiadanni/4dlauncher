@@ -26,7 +26,7 @@
         android:key="@string/pref_key__more_info__help"
         android:title="@string/help" />
 
-    <com.benny.openlauncher.widget.ColorPreferenceCategory android:title="@string/contribute">
+    <com.jiadanni.launcher4d.widget.ColorPreferenceCategory android:title="@string/contribute">
 
         <Preference
             android:icon="@drawable/ic_bug"
@@ -46,15 +46,15 @@
             android:summary="@string/more_info_on_how_to_contribute_to_this_project"
             android:title="@string/project_contribution_info" />
 
-    </com.benny.openlauncher.widget.ColorPreferenceCategory>
+    </com.jiadanni.launcher4d.widget.ColorPreferenceCategory>
 
-    <com.benny.openlauncher.widget.ColorPreferenceCategory
+    <com.jiadanni.launcher4d.widget.ColorPreferenceCategory
         android:key="@string/pref_key__more_info__project_team"
         android:title="@string/project_team">
 
-    </com.benny.openlauncher.widget.ColorPreferenceCategory>
+    </com.jiadanni.launcher4d.widget.ColorPreferenceCategory>
 
-    <com.benny.openlauncher.widget.ColorPreferenceCategory
+    <com.jiadanni.launcher4d.widget.ColorPreferenceCategory
         android:key="@string/pref_key__more_info__project_community"
         android:title="@string/community">
 
@@ -69,9 +69,9 @@
             android:summary="@string/contributors_public_info"
             android:title="@string/contributors" />
 
-    </com.benny.openlauncher.widget.ColorPreferenceCategory>
+    </com.jiadanni.launcher4d.widget.ColorPreferenceCategory>
 
-    <com.benny.openlauncher.widget.ColorPreferenceCategory android:title="@string/licenses">
+    <com.jiadanni.launcher4d.widget.ColorPreferenceCategory android:title="@string/licenses">
 
         <Preference
             android:icon="@drawable/ic_copyright"
@@ -95,6 +95,6 @@
             android:key="@string/pref_key__more_info__copy_build_information"
             android:title="Copy build information" />
 
-    </com.benny.openlauncher.widget.ColorPreferenceCategory>
+    </com.jiadanni.launcher4d.widget.ColorPreferenceCategory>
 
 </PreferenceScreen>
