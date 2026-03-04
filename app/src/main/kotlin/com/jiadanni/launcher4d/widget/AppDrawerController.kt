@@ -42,7 +42,7 @@ class AppDrawerController @JvmOverloads constructor(
     val drawer: View
         get() = when (_drawerMode) {
             Mode.GRID -> _drawerViewGrid!!
-            Mode.PAGE, else -> _drawerViewPage!!
+            else -> _drawerViewPage!!
         }
 
     fun open(cx: Int, cy: Int) {
@@ -107,8 +107,8 @@ class AppDrawerController @JvmOverloads constructor(
 
     fun reset() {
         when (_drawerMode) {
-            Mode.GRID -> _drawerViewGrid?._recyclerView?.scrollToPosition(0)
-            Mode.PAGE, else -> _drawerViewPage?.setCurrentItem(0, false)
+            Mode.GRID -> _drawerViewGrid?.recyclerView?.scrollToPosition(0)
+            else -> _drawerViewPage?.setCurrentItem(0, false)
         }
     }
 
@@ -125,7 +125,7 @@ class AppDrawerController @JvmOverloads constructor(
                 _drawerViewGrid = AppDrawerGrid(context)
                 addView(_drawerViewGrid)
             }
-            Mode.PAGE, else -> {
+            else -> {
                 _drawerViewPage = layoutInflater.inflate(R.layout.view_app_drawer_page, this, false) as AppDrawerPage
                 addView(_drawerViewPage)
                 val indicator = layoutInflater.inflate(R.layout.view_drawer_indicator, this, false) as PagerIndicator

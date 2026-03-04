@@ -17,18 +17,19 @@ import com.jiadanni.launcher4d.util.DragAction
 import com.jiadanni.launcher4d.util.DragHandler
 import com.jiadanni.launcher4d.util.Tool
 import com.jiadanni.launcher4d.viewutil.IconLabelItem
-import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
+import com.mikepenz.fastadapter.FastAdapter
+import com.mikepenz.fastadapter.adapters.ItemAdapter
 import com.turingtechnologies.materialscrollbar.AlphabetIndicator
 import com.turingtechnologies.materialscrollbar.DragScrollBar
 import com.turingtechnologies.materialscrollbar.INameableAdapter
 
 class AppDrawerGrid(context: Context) : FrameLayout(context) {
 
-    val recyclerView: RecyclerView
-    val gridDrawerAdapter: AppDrawerGridAdapter
-    val scrollBar: DragScrollBar
+    lateinit var recyclerView: RecyclerView
+    lateinit var gridDrawerAdapter: AppDrawerGridAdapter
+    lateinit var scrollBar: DragScrollBar
 
-    private val layoutManager: GridLayoutManager
+    private lateinit var layoutManager: GridLayoutManager
 
     init {
         val layoutInflater = LayoutInflater.from(getContext())
@@ -48,8 +49,8 @@ class AppDrawerGrid(context: Context) : FrameLayout(context) {
         }
         scrollBar.setIndicator(AlphabetIndicator(context), true)
         scrollBar.setClipToPadding(true)
-        scrollBar.isDraggableFromAnywhere = true
-        scrollBar.handleColour = Setup.appSettings().drawerFastScrollColor
+        scrollBar.setDraggableFromAnywhere(true)
+        scrollBar.setHandleColor(Setup.appSettings().drawerFastScrollColor)
 
         gridDrawerAdapter = AppDrawerGridAdapter()
 
@@ -98,7 +99,7 @@ class AppDrawerGrid(context: Context) : FrameLayout(context) {
                     .withOnLongClickListener(DragHandler.getLongClick(Item.newAppItem(app), DragAction.Action.DRAWER, null))
             )
         }
-        gridDrawerAdapter.set(items)
+        gridDrawerAdapter.itemAdapter.set(items)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -124,7 +125,10 @@ class AppDrawerGrid(context: Context) : FrameLayout(context) {
         gridDrawerAdapter.notifyAdapterDataSetChanged()
     }
 
-    class AppDrawerGridAdapter : FastItemAdapter<IconLabelItem>(), INameableAdapter {
+    class AppDrawerGridAdapter : FastAdapter<IconLabelItem>(), INameableAdapter {
+        val itemAdapter = ItemAdapter<IconLabelItem>()
+        init { addAdapter(0, itemAdapter) }
+
         override fun getCharacterForElement(element: Int): Char {
             return if (_apps != null && element < _apps!!.size && _apps!![element].label.isNotEmpty()) {
                 _apps!![element].label[0]

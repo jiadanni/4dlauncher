@@ -7,11 +7,11 @@ import com.jiadanni.launcher4d.R
 class PopupDynamicIconLabelItem(
     private val label: CharSequence,
     private val icon: Drawable
-) : AbstractPopupIconLabelItem<PopupDynamicIconLabelItem>() {
+) : AbstractPopupIconLabelItem() {
 
-    override fun getType(): Int = R.id.id_adapter_popup_icon_label_item
+    override val type: Int get() = R.id.id_adapter_popup_icon_label_item
 
-    override fun getLayoutRes(): Int = R.layout.item_popup_icon_label
+    override val layoutRes: Int get() = R.layout.item_popup_icon_label
 
     override fun bindView(holder: ViewHolder, payloads: List<Any>) {
         super.bindView(holder, payloads)

@@ -133,12 +133,14 @@ object Tool {
         }
     }
 
+    fun dp2px(dp: Int): Int = dp2px(dp.toFloat())
     fun dp2px(dp: Float): Int {
         val resources = Resources.getSystem()
         val px = dp * resources.displayMetrics.density
         return ceil(px).toInt()
     }
 
+    fun sp2px(sp: Int): Int = sp2px(sp.toFloat())
     fun sp2px(sp: Float): Int {
         val resources = Resources.getSystem()
         val px = sp * resources.displayMetrics.scaledDensity

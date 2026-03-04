@@ -14,6 +14,7 @@ import android.app.ActivityManager
 import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.Context
+import androidx.core.content.ContextCompat
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -123,7 +124,7 @@ class ActivityUtils(activity: Activity) : ContextUtils(activity) {
                 if (editView.isNotEmpty()) editView[0] else if (activity.currentFocus != null && activity.currentFocus!!.windowToken != null) activity.currentFocus else null
             val imm = activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?
             if (v != null && imm != null) {
-                val r = {
+                val r = Runnable {
                     if (visible) {
                         v.requestFocus()
                         imm.showSoftInput(v, InputMethodManager.SHOW_FORCED)

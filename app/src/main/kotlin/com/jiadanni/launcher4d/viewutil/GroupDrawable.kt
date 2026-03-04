@@ -20,7 +20,7 @@ import kotlin.math.sqrt
 
 class GroupDrawable(context: Context, item: Item, iconSize: Int) : Drawable() {
 
-    private var icons: Array<Drawable?>
+    private lateinit var icons: Array<Drawable?>
     private var iconsCount: Int = 0
     private lateinit var paintInnerCircle: Paint
     private lateinit var paintOuterCircle: Paint
@@ -44,9 +44,9 @@ class GroupDrawable(context: Context, item: Item, iconSize: Int) : Drawable() {
         val size = Tool.dp2px(iconSize.toFloat())
         val iconsArray = arrayOfNulls<Drawable>(4)
 
-        init(iconsArray, item.items.size, size)
-        for (i in 0 until 4.coerceAtMost(item.items.size)) {
-            val temp = item.items[i]
+        init(iconsArray, item.items!!.size, size.toFloat())
+        for (i in 0 until 4.coerceAtMost(item.items!!.size)) {
+            val temp = item.items!![i]
             val app = temp?.let { Setup.appLoader().findItemApp(it) }
 
             if (app == null) {
@@ -118,10 +118,10 @@ class GroupDrawable(context: Context, item: Item, iconSize: Int) : Drawable() {
             Tool.clampFloat(scaleFactor + 0.09f, 0.5f, 1f)
         }
 
-        canvas.scale(scaleFactor, scaleFactor, iconSize / 2, iconSize / 2)
+        canvas.scale(scaleFactor, scaleFactor, iconSize / 2f, iconSize / 2f)
 
         val clip = Path().apply {
-            addCircle(iconSize / 2, iconSize / 2, iconSize / 2 - outline, Path.Direction.CW)
+            addCircle(iconSize / 2f, iconSize / 2f, iconSize / 2f - outline, Path.Direction.CW)
         }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
@@ -130,7 +130,7 @@ class GroupDrawable(context: Context, item: Item, iconSize: Int) : Drawable() {
             canvas.clipPath(clip)
         }
 
-        canvas.drawCircle(iconSize / 2, iconSize / 2, iconSize / 2 - outline, paintInnerCircle)
+        canvas.drawCircle(iconSize / 2f, iconSize / 2f, iconSize / 2f - outline, paintInnerCircle)
 
         when {
             iconsCount > 3 -> {
@@ -154,7 +154,7 @@ class GroupDrawable(context: Context, item: Item, iconSize: Int) : Drawable() {
             canvas.clipRect(0f, 0f, iconSize, iconSize, Region.Op.REPLACE)
         }
 
-        canvas.drawCircle(iconSize / 2, iconSize / 2, iconSize / 2 - outline, paintOuterCircle)
+        canvas.drawCircle(iconSize / 2f, iconSize / 2f, iconSize / 2f - outline, paintOuterCircle)
         canvas.restore()
 
         if (needAnimate) {

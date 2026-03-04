@@ -132,7 +132,7 @@ class AppDrawerPage @JvmOverloads constructor(
                     cardView.cardElevation = 0f
                 } else {
                     cardView.setCardBackgroundColor(Setup.appSettings().drawerCardColor)
-                    cardView.cardElevation = Tool.dp2px(4)
+                    cardView.cardElevation = Tool.dp2px(4).toFloat()
                 }
 
                 val cc = layout.findViewById<CellContainer>(R.id.group)

@@ -37,7 +37,9 @@ import com.jiadanni.launcher4d.util.Tool
 import com.jiadanni.launcher4d.viewutil.CircleDrawable
 import com.jiadanni.launcher4d.viewutil.IconLabelItem
 import com.mikepenz.fastadapter.IItemAdapter
-import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
+import com.mikepenz.fastadapter.FastAdapter
+import com.mikepenz.fastadapter.adapters.ItemAdapter
+import com.mikepenz.fastadapter.IItem
 import org.slf4j.LoggerFactory
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
@@ -64,7 +66,8 @@ class SearchBar @JvmOverloads constructor(
 
     private lateinit var _icon: CircleDrawable
     private lateinit var _searchCardContainer: CardView
-    private val _adapter = FastItemAdapter<IconLabelItem>()
+    private val _itemAdapter = ItemAdapter<IconLabelItem>()
+    private val _adapter = FastAdapter.with(_itemAdapter)
     private var _callback: CallBack? = null
     private var _expanded = false
     private val _searchClockTextSize = 28
@@ -138,7 +141,7 @@ class SearchBar @JvmOverloads constructor(
         _searchButton = AppCompatImageView(context)
         _searchButton.setImageDrawable(_icon)
         _searchButton.setOnClickListener {
-            if (_expanded && _searchInput.text.length > 0) {
+            if (_expanded && (_searchInput.text?.length ?: 0) > 0) {
                 _searchInput.text?.clear()
                 return@setOnClickListener
             }
@@ -172,7 +175,7 @@ class SearchBar @JvmOverloads constructor(
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                _adapter.filter(s)
+                _itemAdapter.filter(s)
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -203,7 +206,7 @@ class SearchBar @JvmOverloads constructor(
 
         Setup.appLoader().addUpdateListener(object : AppUpdateListener {
             override fun onAppUpdated(apps: List<App>): Boolean {
-                _adapter.clear()
+                _itemAdapter.clear()
                 var appList = apps
                 if (Setup.appSettings().getSearchBarShouldShowHiddenApps()) {
                     appList = Setup.appLoader().getAllApps(context, true)
@@ -224,27 +227,26 @@ class SearchBar @JvmOverloads constructor(
                         }
                         .withOnLongClickListener(DragHandler.getLongClick(Item.newAppItem(app), DragAction.Action.SEARCH, null)))
                 }
-                _adapter.set(items)
+                _itemAdapter.set(items)
 
                 return false
             }
         })
 
-        _adapter.itemFilter.withFilterPredicate { item, constraint ->
-            if (constraint.isEmpty()) {
-                return@withFilterPredicate true
-            }
+        _itemAdapter.itemFilter.filterPredicate = { item: IconLabelItem, constraint: CharSequence? ->
+            if (constraint.isNullOrEmpty()) { true } else {
 
             var s = constraint.toString().lowercase()
             s = Normalizer.normalize(s, Normalizer.Form.NFD).replace("\\p{InCombiningDiacriticalMarks}+".toRegex(), "")
-            var itemLabel = item._label.lowercase()
+            var itemLabel = item._label?.lowercase() ?: ""
             itemLabel = Normalizer.normalize(itemLabel, Normalizer.Form.NFD).replace("\\p{InCombiningDiacriticalMarks}+".toRegex(), "")
 
             if (Setup.appSettings().getSearchBarStartsWith()) {
-                itemLabel.startsWith(s)
+                itemLabel!!.startsWith(s)
             } else {
-                itemLabel.contains(s)
+                itemLabel!!.contains(s)
             }
+        }
         }
 
         val recyclerParams = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -305,7 +307,7 @@ class SearchBar @JvmOverloads constructor(
     }
 
     private fun updateList(iconGravity: Int, textGravity: Int) {
-        val apps = _adapter.adapterItems
+        val apps = _itemAdapter.adapterItems
         for (app in apps) {
             app.setIconGravity(iconGravity)
             app.setTextGravity(textGravity)

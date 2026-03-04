@@ -91,7 +91,7 @@ class GroupPopupView : FrameLayout {
         cu.freeContextRef()
 
         val context = itemView.context
-        val cellSize = GroupDef.getCellSize(item.groupItems.size)
+        val cellSize = GroupDef.getCellSize(item.items!!.size)
         _cellContainer.setGridSize(cellSize[0], cellSize[1])
 
         val iconSize = Tool.dp2px(Setup.appSettings().desktopIconSize)
@@ -102,18 +102,18 @@ class GroupPopupView : FrameLayout {
 
         for (x2 in 0 until cellSize[0]) {
             for (y2 in 0 until cellSize[1]) {
-                if (y2 * cellSize[0] + x2 > item.groupItems.size - 1) {
+                if (y2 * cellSize[0] + x2 > item.items!!.size - 1) {
                     continue
                 }
-                val groupItem = item.groupItems[y2 * cellSize[0] + x2] ?: continue
+                val groupItem = item.items!![y2 * cellSize[0] + x2] ?: continue
                 val app = Setup.appLoader().findItemApp(groupItem)
-                if (app == null || AppSettings.get().hiddenAppsList.contains(app.componentName)) {
+                if (app == null || AppSettings.get().hiddenAppsList?.contains(app.componentName) == true) {
                     deleteItem(context, item, groupItem, itemView as AppItemView)
                     appsChanged = true
                     continue
                 } else {
                     val view = ItemViewFactory.getItemView(context, callback, DragAction.Action.DESKTOP, groupItem)
-                    view.setOnLongClickListener {
+                    view?.setOnLongClickListener {
                         if (Setup.appSettings().desktopLock) {
                             val launcher = Tool.getLauncher(context)
                             if (launcher != null) {
@@ -128,7 +128,7 @@ class GroupPopupView : FrameLayout {
                             removeItem(context, item, groupItem, itemView as AppItemView)
 
                             // start the drag action
-                            DragHandler.startDrag(view, groupItem, DragAction.Action.DESKTOP, null)
+                            DragHandler.startDrag(view!!, groupItem, DragAction.Action.DESKTOP, null)
 
                             collapse()
 
@@ -138,14 +138,14 @@ class GroupPopupView : FrameLayout {
                             true
                         }
                     }
-                    view.setOnClickListener {
+                    view?.setOnClickListener {
                         Tool.createScaleInScaleOutAnim(view) {
                             collapse()
                             visibility = View.INVISIBLE
-                            view.context.startActivity(groupItem.intent)
+                            view?.context?.startActivity(groupItem.getIntent()!!)
                         }
                     }
-                    _cellContainer.addViewToGrid(view, x2, y2, 1, 1)
+                    _cellContainer.addViewToGrid(view!!, x2, y2, 1, 1)
                 }
             }
         }
@@ -278,7 +278,7 @@ class GroupPopupView : FrameLayout {
     }
 
     private fun removeItem(context: Context, currentItem: Item, dragOutItem: Item, currentView: AppItemView) {
-        currentItem.groupItems.remove(dragOutItem)
+        currentItem.items!!.remove(dragOutItem)
 
         Setup.dataManager().saveItem(dragOutItem, ItemState.Visible)
         Setup.dataManager().saveItem(currentItem)
@@ -287,7 +287,7 @@ class GroupPopupView : FrameLayout {
     }
 
     private fun deleteItem(context: Context, currentItem: Item, dragOutItem: Item, currentView: AppItemView) {
-        currentItem.groupItems.remove(dragOutItem)
+        currentItem.items!!.remove(dragOutItem)
 
         Setup.dataManager().deleteItem(dragOutItem, false)
         Setup.dataManager().saveItem(currentItem)
@@ -296,10 +296,10 @@ class GroupPopupView : FrameLayout {
     }
 
     fun updateItem(callback: DesktopCallback, currentItem: Item, currentView: View) {
-        if (currentItem.groupItems.size == 1) {
-            val app = Setup.appLoader().findItemApp(currentItem.groupItems[0])
+        if (currentItem.items!!.size == 1) {
+            val app = Setup.appLoader().findItemApp(currentItem.items!![0])
             if (app != null) {
-                val item = Setup.dataManager().getItem(currentItem.groupItems[0].id)
+                val item = Setup.dataManager().getItem(currentItem.items!![0].id)!!
                 item.x = currentItem.x
                 item.y = currentItem.y
                 item._location = ItemPosition.Desktop

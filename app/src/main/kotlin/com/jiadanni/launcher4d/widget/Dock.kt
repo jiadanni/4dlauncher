@@ -32,10 +32,10 @@ class Dock(context: Context, attr: AttributeSet) : CellContainer(context, attr),
         val columns = Setup.appSettings().dockColumnCount
         val rows = Setup.appSettings().dockRowCount
         setGridSize(columns, rows)
-        val dockItems = Setup.dataManager().dock
+        val dockItems = Setup.dataManager().getDock()
         removeAllViews()
         for (item in dockItems) {
-            if (item._x + item._spanX <= columns && item._y + item._spanY <= rows) {
+            if (item.x + item.spanX <= columns && item.y + item.spanY <= rows) {
                 addItemToPage(item, 0)
             }
         }
@@ -82,7 +82,7 @@ class Dock(context: Context, attr: AttributeSet) : CellContainer(context, attr),
                 projectImageOutlineAt(coordinate, DragHandler._cachedDragBitmap)
             }
             DragState.CurrentOccupied -> {
-                val type = dragNDropView.dragItem._type
+                val type = dragNDropView.dragItem?.type
                 clearCachedOutlineBitmap()
                 if (type != Item.Type.WIDGET && coordinateToChildView(coordinate) is AppItemView) {
                     val yOffset = if (Setup.appSettings().dockShowLabel) Tool.dp2px(7) else 0
@@ -126,13 +126,13 @@ class Dock(context: Context, attr: AttributeSet) : CellContainer(context, attr),
 
     override fun revertLastItem() {
         if (previousItemView != null && previousItem != null) {
-            addViewToGrid(previousItemView)
+            addViewToGrid(previousItemView!!)
             previousItem = null
             previousItemView = null
         }
     }
 
-    fun addItemToPage(item: Item, page: Int): Boolean {
+    override fun addItemToPage(item: Item, page: Int): Boolean {
         val itemView = ItemViewFactory.getItemView(context, this, Action.DESKTOP, item, isDockShowLabel())
         if (itemView == null) {
             // TODO see if this fixes SD card bug
@@ -140,16 +140,16 @@ class Dock(context: Context, attr: AttributeSet) : CellContainer(context, attr),
             return false
         }
         item._location = ItemPosition.Dock
-        addViewToGrid(itemView, item._x, item._y, item._spanX, item._spanY)
+        addViewToGrid(itemView, item.x, item.y, item.spanX, item.spanY)
         return true
     }
 
-    fun addItemToPoint(item: Item, x: Int, y: Int): Boolean {
-        val positionToLayoutPrams = coordinateToLayoutParams(x, y, item._spanX, item._spanY) ?: return false
+    override fun addItemToPoint(item: Item, x: Int, y: Int): Boolean {
+        val positionToLayoutPrams = coordinateToLayoutParams(x, y, item.spanX, item.spanY) ?: return false
 
         item._location = ItemPosition.Dock
-        item._x = positionToLayoutPrams.x
-        item._y = positionToLayoutPrams.y
+        item.x = positionToLayoutPrams.x
+        item.y = positionToLayoutPrams.y
         val itemView = ItemViewFactory.getItemView(context, this, Action.DESKTOP, item, isDockShowLabel())
         if (itemView != null) {
             itemView.layoutParams = positionToLayoutPrams
@@ -158,18 +158,18 @@ class Dock(context: Context, attr: AttributeSet) : CellContainer(context, attr),
         return true
     }
 
-    fun addItemToCell(item: Item, x: Int, y: Int): Boolean {
+    override fun addItemToCell(item: Item, x: Int, y: Int): Boolean {
         item._location = ItemPosition.Dock
-        item._x = x
-        item._y = y
+        item.x = x
+        item.y = y
         val itemView = ItemViewFactory.getItemView(context, this, Action.DESKTOP, item, isDockShowLabel())
             ?: return false
 
-        addViewToGrid(itemView, item._x, item._y, item._spanX, item._spanY)
+        addViewToGrid(itemView, item.x, item.y, item.spanX, item.spanY)
         return true
     }
 
-    fun removeItem(view: View, animate: Boolean) {
+    override fun removeItem(view: View, animate: Boolean) {
         if (animate) {
             view.animate().setDuration(100).scaleX(0.0f).scaleY(0.0f).withEndAction {
                 if (view.parent == this@Dock) {

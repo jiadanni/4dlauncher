@@ -25,7 +25,7 @@ object ItemViewFactory {
     @JvmOverloads
     fun getItemView(
         context: Context,
-        callback: DesktopCallback,
+        callback: DesktopCallback?,
         type: DragAction.Action,
         item: Item,
         showLabel: Boolean? = null
@@ -57,7 +57,7 @@ object ItemViewFactory {
             when (item.type) {
                 Item.Type.APP -> {
                     val app = Setup.appLoader().findItemApp(item) ?: return null
-                    view = builder.setAppItem(item).view
+                    view = builder.setAppItem(item).getView()
 
                     if (Setup.appSettings().notificationStatus) {
                         NotificationListener.setNotificationCallback(
@@ -67,14 +67,14 @@ object ItemViewFactory {
                     }
                 }
                 Item.Type.SHORTCUT -> {
-                    view = builder.setShortcutItem(item).view
+                    view = builder.setShortcutItem(item).getView()
                 }
                 Item.Type.GROUP -> {
-                    view = builder.setGroupItem(context, callback, item).view
+                    view = builder.setGroupItem(context, callback!!, item).getView()
                     view.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
                 }
                 Item.Type.ACTION -> {
-                    view = builder.setActionItem(item).view
+                    view = builder.setActionItem(item).getView()
                 }
                 else -> {
                     // Do nothing for other types
@@ -91,7 +91,7 @@ object ItemViewFactory {
     @JvmStatic
     fun getWidgetView(
         context: Context,
-        callback: DesktopCallback,
+        callback: DesktopCallback?,
         type: DragAction.Action,
         item: Item
     ): View? {

@@ -18,32 +18,28 @@ class DesktopGestureListener(
         DoubleTap
     }
 
-    override fun onSwipeUp(i: Int, l: Long, v: Double): Boolean {
+    override fun onSwipeUp(i: Int, l: Long): Boolean {
         return callback.onDrawerGesture(desktop, Type.SwipeUp)
     }
 
-    override fun onSwipeDown(i: Int, l: Long, v: Double): Boolean {
+    override fun onSwipeDown(i: Int, l: Long): Boolean {
         return callback.onDrawerGesture(desktop, Type.SwipeDown)
     }
 
-    override fun onSwipeLeft(i: Int, l: Long, v: Double): Boolean {
+    override fun onSwipeLeft(i: Int, l: Long): Boolean {
         return callback.onDrawerGesture(desktop, Type.SwipeLeft)
     }
 
-    override fun onSwipeRight(i: Int, l: Long, v: Double): Boolean {
+    override fun onSwipeRight(i: Int, l: Long): Boolean {
         return callback.onDrawerGesture(desktop, Type.SwipeRight)
     }
 
-    override fun onPinch(i: Int, l: Long, v: Double): Boolean {
+    override fun onPinch(i: Int, l: Long): Boolean {
         return callback.onDrawerGesture(desktop, Type.Pinch)
     }
 
-    override fun onUnpinch(i: Int, l: Long, v: Double): Boolean {
+    override fun onUnpinch(i: Int, l: Long): Boolean {
         return callback.onDrawerGesture(desktop, Type.Unpinch)
-    }
-
-    override fun onDoubleTap(i: Int): Boolean {
-        return callback.onDrawerGesture(desktop, Type.DoubleTap)
     }
 
     interface DesktopGestureCallback {

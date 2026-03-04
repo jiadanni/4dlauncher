@@ -60,7 +60,7 @@ object FileUtils {
 
     fun readTextFile(file: File): String {
         try {
-            return readCloseTextStream(FileInputStream(file))
+            return readCloseTextStream(FileInputStream(file)).joinToString("\n")
         } catch (e: FileNotFoundException) {
             System.err.println("readTextFile: File $file not found.")
         }

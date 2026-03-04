@@ -17,9 +17,9 @@ class DrawerAppItem(private val app: App) : AbstractItem<DrawerAppItem.ViewHolde
     // ideally remove all the custom code for AppItemView in favor of the
     // nicer code in IconLabelItem
 
-    override fun getType(): Int = R.id.id_adapter_drawer_app_item
+    override val type: Int get() = R.id.id_adapter_drawer_app_item
 
-    override fun getLayoutRes(): Int = R.layout.item_app
+    override val layoutRes: Int get() = R.layout.item_app
 
     override fun getViewHolder(v: View): ViewHolder = ViewHolder(v)
 

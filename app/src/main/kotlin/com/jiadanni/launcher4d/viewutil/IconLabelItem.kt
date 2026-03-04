@@ -118,11 +118,11 @@ class IconLabelItem : AbstractItem<IconLabelItem.ViewHolder> {
         return ViewHolder(view, this)
     }
 
-    override fun getLayoutRes(): Int {
+    override val layoutRes: Int get() {
         return R.layout.item_icon_label
     }
 
-    override fun getType(): Int {
+    override val type: Int get() {
         return R.id.id_adapter_icon_label_item
     }
 

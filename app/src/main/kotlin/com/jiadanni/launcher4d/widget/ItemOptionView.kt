@@ -28,7 +28,8 @@ import com.jiadanni.launcher4d.viewutil.AbstractPopupIconLabelItem
 import com.jiadanni.launcher4d.viewutil.PopupDynamicIconLabelItem
 import com.jiadanni.launcher4d.viewutil.PopupIconLabelItem
 import com.mikepenz.fastadapter.IAdapter
-import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
+import com.mikepenz.fastadapter.FastAdapter
+import com.mikepenz.fastadapter.adapters.ItemAdapter
 import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator
 import jp.wasabeef.recyclerview.animators.SlideInRightAnimator
 
@@ -54,9 +55,9 @@ class ItemOptionView(context: Context, attrs: AttributeSet?) : FrameLayout(conte
             return true
         }
 
-        override fun onDraw(canvas: Canvas?) {
+        override fun onDraw(canvas: Canvas) {
             super.onDraw(canvas)
-            if (canvas == null || DragHandler._cachedDragBitmap == null || _dragLocation.equals(-1f, -1f))
+            if (DragHandler._cachedDragBitmap == null || _dragLocation.equals(-1f, -1f))
                 return
 
             val x = _dragLocation.x
@@ -67,13 +68,13 @@ class ItemOptionView(context: Context, attrs: AttributeSet?) : FrameLayout(conte
                 _overlayIconScale = Tool.clampFloat(_overlayIconScale + 0.05f, 1f, 1.1f)
                 canvas.scale(
                     _overlayIconScale, _overlayIconScale,
-                    x + DragHandler._cachedDragBitmap.width / 2,
-                    y + DragHandler._cachedDragBitmap.height / 2
+                    x + DragHandler._cachedDragBitmap!!.width / 2f,
+                    y + DragHandler._cachedDragBitmap!!.height / 2f
                 )
                 canvas.drawBitmap(
-                    DragHandler._cachedDragBitmap,
-                    x - DragHandler._cachedDragBitmap.width / 2,
-                    y - DragHandler._cachedDragBitmap.height / 2,
+                    DragHandler._cachedDragBitmap!!,
+                    x - DragHandler._cachedDragBitmap!!.width / 2f,
+                    y - DragHandler._cachedDragBitmap!!.height / 2f,
                     _paint
                 )
                 canvas.restore()
@@ -96,7 +97,8 @@ class ItemOptionView(context: Context, attrs: AttributeSet?) : FrameLayout(conte
     private var _folderPreviewScale = 0f
     private var _overlayIconScale = 1.0f
     private val _overlayPopup: RecyclerView
-    private val _overlayPopupAdapter = FastItemAdapter<AbstractPopupIconLabelItem>()
+    private val _overlayPopupItemAdapter = ItemAdapter<AbstractPopupIconLabelItem>()
+    private val _overlayPopupAdapter = FastAdapter.with(_overlayPopupItemAdapter)
     private var _overlayPopupShowing = false
     private val _overlayView: OverlayView
     private val _paint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -114,11 +116,11 @@ class ItemOptionView(context: Context, attrs: AttributeSet?) : FrameLayout(conte
     private val resizeItemIdentifier = 87
     private val startShortcutItemIdentifier = 88
 
-    private val uninstallItem = PopupIconLabelItem(R.string.uninstall, R.drawable.ic_delete).withIdentifier(uninstallItemIdentifier.toLong())
-    private val infoItem = PopupIconLabelItem(R.string.info, R.drawable.ic_info).withIdentifier(infoItemIdentifier.toLong())
-    private val editItem = PopupIconLabelItem(R.string.edit, R.drawable.ic_edit).withIdentifier(editItemIdentifier.toLong())
-    private val removeItem = PopupIconLabelItem(R.string.remove, R.drawable.ic_close).withIdentifier(removeItemIdentifier.toLong())
-    private val resizeItem = PopupIconLabelItem(R.string.resize, R.drawable.ic_resize).withIdentifier(resizeItemIdentifier.toLong())
+    private val uninstallItem = PopupIconLabelItem(R.string.uninstall, R.drawable.ic_delete).apply { identifier = uninstallItemIdentifier.toLong() }
+    private val infoItem = PopupIconLabelItem(R.string.info, R.drawable.ic_info).apply { identifier = infoItemIdentifier.toLong() }
+    private val editItem = PopupIconLabelItem(R.string.edit, R.drawable.ic_edit).apply { identifier = editItemIdentifier.toLong() }
+    private val removeItem = PopupIconLabelItem(R.string.remove, R.drawable.ic_close).apply { identifier = removeItemIdentifier.toLong() }
+    private val resizeItem = PopupIconLabelItem(R.string.resize, R.drawable.ic_resize).apply { identifier = resizeItemIdentifier.toLong() }
 
     init {
         _paint.isFilterBitmap = true
@@ -178,9 +180,9 @@ class ItemOptionView(context: Context, attrs: AttributeSet?) : FrameLayout(conte
         invalidate()
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        if (canvas != null && _showFolderPreview && !_previewLocation.equals(-1.0f, -1.0f)) {
+        if (_showFolderPreview && !_previewLocation.equals(-1.0f, -1.0f)) {
             _folderPreviewScale += 0.08f
             _folderPreviewScale = Tool.clampFloat(_folderPreviewScale, 0.5f, 1.0f)
             canvas.drawCircle(
@@ -205,7 +207,7 @@ class ItemOptionView(context: Context, attrs: AttributeSet?) : FrameLayout(conte
         x: Float,
         y: Float,
         popupItem: List<AbstractPopupIconLabelItem>,
-        listener: com.mikepenz.fastadapter.listeners.OnClickListener<AbstractPopupIconLabelItem>
+        listener: (android.view.View?, com.mikepenz.fastadapter.IAdapter<AbstractPopupIconLabelItem>, AbstractPopupIconLabelItem, Int) -> Boolean
     ) {
         if (!_overlayPopupShowing) {
             _overlayPopupShowing = true
@@ -213,8 +215,8 @@ class ItemOptionView(context: Context, attrs: AttributeSet?) : FrameLayout(conte
             _overlayPopup.translationX = x
             _overlayPopup.translationY = y
             _overlayPopup.alpha = 1.0f
-            _overlayPopupAdapter.add(popupItem)
-            _overlayPopupAdapter.withOnClickListener(listener)
+            _overlayPopupItemAdapter.add(popupItem)
+            _overlayPopupAdapter.onClickListener = { v, adapter, item, position -> listener(v, adapter, item, position) }
         }
     }
 
@@ -231,7 +233,7 @@ class ItemOptionView(context: Context, attrs: AttributeSet?) : FrameLayout(conte
             _overlayPopupShowing = false
             _overlayPopup.animate().alpha(0.0f).withEndAction {
                 _overlayPopup.visibility = View.INVISIBLE
-                _overlayPopupAdapter.clear()
+                _overlayPopupItemAdapter.clear()
             }
             if (!_dragging) {
                 _dragView = null
@@ -251,11 +253,11 @@ class ItemOptionView(context: Context, attrs: AttributeSet?) : FrameLayout(conte
         _dragLocationStart.set(_dragLocation)
 
         for ((dropTargetListener, dragFlag) in _registeredDropTargetEntries) {
-            convertPoint(dropTargetListener.view)
+            convertPoint(dropTargetListener.getView())
             dragFlag.shouldIgnore = !dropTargetListener.onStart(
-                _dragAction,
+                _dragAction!!,
                 _dragLocationConverted,
-                isViewContains(dropTargetListener.view, _dragLocation.x.toInt(), _dragLocation.y.toInt())
+                isViewContains(dropTargetListener.getView(), _dragLocation.x.toInt(), _dragLocation.y.toInt())
             )
         }
 
@@ -347,8 +349,8 @@ class ItemOptionView(context: Context, attrs: AttributeSet?) : FrameLayout(conte
             else -> {}
         }
 
-        var x = dragLocation.x - HomeActivity._itemTouchX + Tool.dp2px(10)
-        var y = dragLocation.y - HomeActivity._itemTouchY - Tool.dp2px(46 * itemList.size)
+        var x = dragLocation.x - (HomeActivity._itemTouchX + Tool.dp2px(10)).toFloat()
+        var y = dragLocation.y - (HomeActivity._itemTouchY - Tool.dp2px(46 * itemList.size)).toFloat()
 
         if (x + Tool.dp2px(200) > width) {
             setPopupMenuShowDirection(false)
@@ -365,7 +367,7 @@ class ItemOptionView(context: Context, attrs: AttributeSet?) : FrameLayout(conte
             y -= Tool.dp2px(4)
         }
 
-        showPopupMenuForItem(x.toFloat(), y.toFloat(), itemList) { v, adapter, item, position ->
+        showPopupMenuForItem(x.toFloat(), y.toFloat(), itemList) { v: View?, adapter: com.mikepenz.fastadapter.IAdapter<AbstractPopupIconLabelItem>, item: AbstractPopupIconLabelItem, position: Int ->
             dragItem?.let { dragItem ->
                 val itemOption = HpItemOption(homeActivity)
                 when (item.identifier.toInt()) {
@@ -395,8 +397,8 @@ class ItemOptionView(context: Context, attrs: AttributeSet?) : FrameLayout(conte
             else -> {}
         }
 
-        var x = dragLocation.x - HomeActivity._itemTouchX + Tool.dp2px(10)
-        var y = dragLocation.y - HomeActivity._itemTouchY - Tool.dp2px(46 * itemList.size)
+        var x = dragLocation.x - (HomeActivity._itemTouchX + Tool.dp2px(10)).toFloat()
+        var y = dragLocation.y - (HomeActivity._itemTouchY - Tool.dp2px(46 * itemList.size)).toFloat()
 
         if (x + Tool.dp2px(200) > width) {
             setPopupMenuShowDirection(false)
@@ -413,7 +415,7 @@ class ItemOptionView(context: Context, attrs: AttributeSet?) : FrameLayout(conte
             y -= Tool.dp2px(4)
         }
 
-        showPopupMenuForItem(x.toFloat(), y.toFloat(), itemList) { v, adapter, item1, position ->
+        showPopupMenuForItem(x.toFloat(), y.toFloat(), itemList) { v: View?, adapter: com.mikepenz.fastadapter.IAdapter<AbstractPopupIconLabelItem>, item1: AbstractPopupIconLabelItem, position: Int ->
             val itemOption = HpItemOption(homeActivity)
             when (item1.identifier.toInt()) {
                 uninstallItemIdentifier -> itemOption.onUninstallItem(item)
@@ -429,9 +431,9 @@ class ItemOptionView(context: Context, attrs: AttributeSet?) : FrameLayout(conte
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
             val launcherApps = context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
             PopupDynamicIconLabelItem(
-                shortcutInfo.shortLabel,
+                shortcutInfo.shortLabel?.toString() ?: "",
                 launcherApps.getShortcutIconDrawable(shortcutInfo, context.resources.displayMetrics.densityDpi)
-            ).withIdentifier(startShortcutItemIdentifier.toLong())
+            ).apply { identifier = startShortcutItemIdentifier.toLong() }
         } else {
             throw IllegalStateException("getAppShortcutItem should not be called below N_MR1")
         }
@@ -445,8 +447,8 @@ class ItemOptionView(context: Context, attrs: AttributeSet?) : FrameLayout(conte
             _dragExceedThreshold = true
             for ((dropTargetListener, dragFlag) in _registeredDropTargetEntries) {
                 if (!dragFlag.shouldIgnore) {
-                    convertPoint(dropTargetListener.view)
-                    dropTargetListener.onStartDrag(_dragAction, _dragLocationConverted)
+                    convertPoint(dropTargetListener.getView())
+                    dropTargetListener.onStartDrag(_dragAction!!, _dragLocationConverted)
                 }
             }
         }
@@ -455,16 +457,16 @@ class ItemOptionView(context: Context, attrs: AttributeSet?) : FrameLayout(conte
         }
         for ((dropTargetListener, dragFlag) in _registeredDropTargetEntries) {
             if (!dragFlag.shouldIgnore) {
-                convertPoint(dropTargetListener.view)
-                if (isViewContains(dropTargetListener.view, _dragLocation.x.toInt(), _dragLocation.y.toInt())) {
-                    dropTargetListener.onMove(_dragAction, _dragLocationConverted)
+                convertPoint(dropTargetListener.getView())
+                if (isViewContains(dropTargetListener.getView(), _dragLocation.x.toInt(), _dragLocation.y.toInt())) {
+                    dropTargetListener.onMove(_dragAction!!, _dragLocationConverted)
                     if (dragFlag.previousOutside) {
                         dragFlag.previousOutside = false
-                        dropTargetListener.onEnter(_dragAction, _dragLocationConverted)
+                        dropTargetListener.onEnter(_dragAction!!, _dragLocationConverted)
                     }
                 } else if (!dragFlag.previousOutside) {
                     dragFlag.previousOutside = true
-                    dropTargetListener.onExit(_dragAction, _dragLocationConverted)
+                    dropTargetListener.onExit(_dragAction!!, _dragLocationConverted)
                 }
             }
         }
@@ -474,9 +476,9 @@ class ItemOptionView(context: Context, attrs: AttributeSet?) : FrameLayout(conte
         _dragging = false
         for ((dropTargetListener, dragFlag) in _registeredDropTargetEntries) {
             if (!dragFlag.shouldIgnore) {
-                if (isViewContains(dropTargetListener.view, _dragLocation.x.toInt(), _dragLocation.y.toInt())) {
-                    convertPoint(dropTargetListener.view)
-                    dropTargetListener.onDrop(_dragAction, _dragLocationConverted, _dragItem)
+                if (isViewContains(dropTargetListener.getView(), _dragLocation.x.toInt(), _dragLocation.y.toInt())) {
+                    convertPoint(dropTargetListener.getView())
+                    dropTargetListener.onDrop(_dragAction!!, _dragLocationConverted, _dragItem!!)
                 }
             }
         }

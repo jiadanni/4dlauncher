@@ -26,7 +26,7 @@ import com.jiadanni.launcher4d.viewutil.DesktopGestureListener
 import com.jiadanni.launcher4d.viewutil.ItemViewFactory
 import com.jiadanni.launcher4d.viewutil.MultiTouchGestureDetector
 import com.jiadanni.launcher4d.widget.CellContainer.DragState
-import in.championswimmer.sfg.lib.SimpleFingerGestures
+import `in`.championswimmer.sfg.lib.SimpleFingerGestures
 
 class Desktop : ViewPager, DesktopCallback {
     private var _desktopEditListener: OnDesktopEditListener? = null
@@ -85,12 +85,12 @@ class Desktop : ViewPager, DesktopCallback {
         return when (gesture) {
             is android.content.Intent -> {
                 // Launch app
-                Tool.startApp(context, gesture, null)
+                try { context.startActivity(gesture) } catch (e: Exception) { }
                 true
             }
             is LauncherAction.ActionDisplayItem -> {
                 // Execute launcher action
-                LauncherAction.RunAction(gesture._action, context)
+                LauncherAction.runAction(gesture._action, context)
                 true
             }
             else -> false
@@ -147,7 +147,7 @@ class Desktop : ViewPager, DesktopCallback {
 
         fun removePage(position: Int, deleteItems: Boolean) {
             if (deleteItems) {
-                for (view in _desktop.pages[position].getAllCells()) {
+                for (view in _desktop.pages[position].allCells) {
                     val item = view.tag
                     if (item is Item) {
                         Setup.dataManager().deleteItem(item, true)
@@ -161,7 +161,7 @@ class Desktop : ViewPager, DesktopCallback {
                 Setup.appSettings().setDesktopPageCurrent(Setup.appSettings().getDesktopPageCurrent() - 1)
             }
 
-            _desktop.pages.remove(position)
+            _desktop.pages.removeAt(position)
             notifyDataSetChanged()
         }
 
@@ -200,11 +200,11 @@ class Desktop : ViewPager, DesktopCallback {
                 val animation = v.animate().scaleX(scaleFactor).scaleY(scaleFactor).translationY(translateFactor)
                 animation.interpolator = AccelerateDecelerateInterpolator()
             }
-            _desktop.setInEditMode(true)
+            _desktop.inEditMode = (true)
             _desktop.desktopEditListener?.onStartDesktopEdit()
         }
 
-        private fun exitDesktopEditMode() {
+        fun exitDesktopEditMode() {
             val scaleFactor = 1.0f
             val translateFactor = 0.0f
             for (v in _desktop.pages) {
@@ -213,7 +213,7 @@ class Desktop : ViewPager, DesktopCallback {
                 val animation = v.animate().scaleX(scaleFactor).scaleY(scaleFactor).translationY(translateFactor)
                 animation.interpolator = AccelerateDecelerateInterpolator()
             }
-            _desktop.setInEditMode(false)
+            _desktop.inEditMode = (false)
             _desktop.desktopEditListener?.onFinishDesktopEdit()
         }
     }
@@ -324,15 +324,15 @@ class Desktop : ViewPager, DesktopCallback {
                 currentPage.projectImageOutlineAt(_coordinate, DragHandler._cachedDragBitmap)
             }
             DragState.CurrentOccupied -> {
-                val type = dragNDropView?.getDragItem()?._type
+                val type = dragNDropView?.dragItem?.type
                 for (page in _pages) {
                     page.clearCachedOutlineBitmap()
                 }
                 if (type != Type.WIDGET && currentPage.coordinateToChildView(_coordinate) is AppItemView) {
                     dragNDropView?.showFolderPreviewAt(
                         this,
-                        currentPage.getCellWidth() * (_coordinate.x + 0.5f),
-                        currentPage.getCellHeight() * (_coordinate.y + 0.5f)
+                        currentPage.cellWidth * (_coordinate.x + 0.5f),
+                        currentPage.cellHeight * (_coordinate.y + 0.5f)
                     )
                 }
             }
@@ -346,7 +346,7 @@ class Desktop : ViewPager, DesktopCallback {
         }
     }
 
-    override fun setLastItem(item: Item?, view: View?) {
+    override fun setLastItem(item: Item, view: View) {
         _previousPage = currentItem
         _previousItemView = view
         _previousItem = item
@@ -371,7 +371,7 @@ class Desktop : ViewPager, DesktopCallback {
         _previousPage = -1
     }
 
-    fun addItemToPage(item: Item, page: Int): Boolean {
+    override fun addItemToPage(item: Item, page: Int): Boolean {
         val itemView = ItemViewFactory.getItemView(context, this, Action.DESKTOP, item)
         if (itemView == null) {
             // TODO see if this fixes SD card bug
@@ -385,12 +385,12 @@ class Desktop : ViewPager, DesktopCallback {
         return true
     }
 
-    fun addItemToPoint(item: Item, x: Int, y: Int): Boolean {
+    override fun addItemToPoint(item: Item, x: Int, y: Int): Boolean {
         val positionToLayoutPrams = currentPage.coordinateToLayoutParams(x, y, item._spanX, item._spanY)
             ?: return false
         item._location = ItemPosition.Desktop
-        item._x = positionToLayoutPrams.getX()
-        item._y = positionToLayoutPrams.getY()
+        item._x = positionToLayoutPrams.x
+        item._y = positionToLayoutPrams.y
         val itemView = ItemViewFactory.getItemView(context, this, Action.DESKTOP, item)
         itemView?.let {
             it.layoutParams = positionToLayoutPrams
@@ -399,7 +399,7 @@ class Desktop : ViewPager, DesktopCallback {
         return true
     }
 
-    fun addItemToCell(item: Item, x: Int, y: Int): Boolean {
+    override fun addItemToCell(item: Item, x: Int, y: Int): Boolean {
         item._location = ItemPosition.Desktop
         item._x = x
         item._y = y
@@ -409,7 +409,7 @@ class Desktop : ViewPager, DesktopCallback {
         return true
     }
 
-    fun removeItem(view: View, animate: Boolean) {
+    override fun removeItem(view: View, animate: Boolean) {
         if (animate) {
             view.animate().setDuration(100).scaleX(0.0f).scaleY(0.0f).withEndAction {
                 if (currentPage == view.parent) {
@@ -493,17 +493,17 @@ class Desktop : ViewPager, DesktopCallback {
             if (item == null) return false
             if (dropItem == null) return false
 
-            val type = item._type ?: return false
+            val type = item.type ?: return false
 
             when (type) {
                 Type.APP, Type.SHORTCUT -> {
-                    if (Type.APP == dropItem._type || Type.SHORTCUT == dropItem._type) {
+                    if (Type.APP == dropItem.type || Type.SHORTCUT == dropItem.type) {
                         itemView?.let { parent.removeView(it) }
                         val group = Item.newGroupItem()
                         item._location = ItemPosition.Group
                         dropItem._location = ItemPosition.Group
-                        group.getGroupItems().add(item)
-                        group.getGroupItems().add(dropItem)
+                        group.items!!.add(item)
+                        group.items!!.add(dropItem)
                         group._x = item._x
                         group._y = item._y
                         Setup.dataManager().saveItem(dropItem, page, ItemPosition.Group)
@@ -514,13 +514,13 @@ class Desktop : ViewPager, DesktopCallback {
                         homeActivity.desktop.consumeLastItem()
                         homeActivity.dock.consumeLastItem()
                         return true
-                    } else if (Type.GROUP == dropItem._type && dropItem.getGroupItems().size < GroupPopupView.GroupDef._maxItem) {
+                    } else if (Type.GROUP == dropItem.type && dropItem.items!!.size < GroupPopupView.GroupDef._maxItem) {
                         itemView?.let { parent.removeView(it) }
                         val group = Item.newGroupItem()
                         item._location = ItemPosition.Group
                         dropItem._location = ItemPosition.Group
-                        group.getGroupItems().add(item)
-                        group.getGroupItems().addAll(dropItem.getGroupItems())
+                        group.items!!.add(item)
+                        group.items!!.addAll(dropItem.items!!)
                         group._x = item._x
                         group._y = item._y
                         Setup.dataManager().deleteItem(dropItem, false)
@@ -533,10 +533,10 @@ class Desktop : ViewPager, DesktopCallback {
                     }
                 }
                 Type.GROUP -> {
-                    if ((Type.APP == dropItem._type || Type.SHORTCUT == dropItem._type) && item.getGroupItems().size < GroupPopupView.GroupDef._maxItem) {
+                    if ((Type.APP == dropItem.type || Type.SHORTCUT == dropItem.type) && item.items!!.size < GroupPopupView.GroupDef._maxItem) {
                         itemView?.let { parent.removeView(it) }
                         dropItem._location = ItemPosition.Group
-                        item.getGroupItems().add(dropItem)
+                        item.items!!.add(dropItem)
                         Setup.dataManager().saveItem(dropItem, page, ItemPosition.Group)
                         Setup.dataManager().saveItem(dropItem, ItemState.Hidden)
                         Setup.dataManager().saveItem(item, page, itemPosition)
@@ -544,9 +544,9 @@ class Desktop : ViewPager, DesktopCallback {
                         homeActivity.desktop.consumeLastItem()
                         homeActivity.dock.consumeLastItem()
                         return true
-                    } else if (Type.GROUP == dropItem._type && item.getGroupItems().size < GroupPopupView.GroupDef._maxItem && dropItem.getGroupItems().size < GroupPopupView.GroupDef._maxItem) {
+                    } else if (Type.GROUP == dropItem.type && item.items!!.size < GroupPopupView.GroupDef._maxItem && dropItem.items!!.size < GroupPopupView.GroupDef._maxItem) {
                         itemView?.let { parent.removeView(it) }
-                        item.getGroupItems().addAll(dropItem.getGroupItems())
+                        item.items!!.addAll(dropItem.items!!)
                         Setup.dataManager().saveItem(item, page, itemPosition)
                         Setup.dataManager().deleteItem(dropItem, false)
                         callback.addItemToPage(item, page)

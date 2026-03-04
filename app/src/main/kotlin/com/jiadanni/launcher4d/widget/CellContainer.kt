@@ -28,10 +28,10 @@ open class CellContainer @JvmOverloads constructor(
     private val bgPaint = Paint(1)
     private var blockTouch = false
     private var cachedOutlineBitmap: Bitmap? = null
-    private var cellHeight = 0
-    private var cellSpanH = 0
-    private var cellSpanV = 0
-    private var cellWidth = 0
+    private var _cellHeight = 0
+    private var _cellSpanH = 0
+    private var _cellSpanV = 0
+    private var _cellWidth = 0
     private var cells: Array<Array<Rect>>? = null
     private val currentOutlineCoordinate = Point(-1, -1)
     private var down: Long = 0
@@ -96,16 +96,16 @@ open class CellContainer @JvmOverloads constructor(
     }
 
     val cellWidth: Int
-        get() = this.cellWidth
+        get() = this._cellWidth
 
     val cellHeight: Int
-        get() = this.cellHeight
+        get() = this._cellHeight
 
     val cellSpanV: Int
-        get() = this.cellSpanV
+        get() = this._cellSpanV
 
     val cellSpanH: Int
-        get() = this.cellSpanH
+        get() = this._cellSpanH
 
     fun setBlockTouch(v: Boolean) {
         blockTouch = v
@@ -140,8 +140,8 @@ open class CellContainer @JvmOverloads constructor(
     }
 
     fun setGridSize(x: Int, y: Int) {
-        cellSpanV = y
-        cellSpanH = x
+        _cellSpanV = y
+        _cellSpanH = x
 
         occupied = Array(cellSpanH) { BooleanArray(cellSpanV) }
         for (i in 0 until cellSpanH) {
@@ -505,15 +505,15 @@ open class CellContainer @JvmOverloads constructor(
         val width = r - l - paddingLeft - paddingRight
         val height = b - t - paddingTop - paddingBottom
 
-        if (cellSpanH == 0) {
-            cellSpanH = 1
+        if (_cellSpanH == 0) {
+            _cellSpanH = 1
         }
-        if (cellSpanV == 0) {
-            cellSpanV = 1
+        if (_cellSpanV == 0) {
+            _cellSpanV = 1
         }
 
-        cellWidth = width / cellSpanH
-        cellHeight = height / cellSpanV
+        _cellWidth = width / cellSpanH
+        _cellHeight = height / cellSpanV
         initCellInfo(paddingLeft, paddingTop, width - paddingRight, height - paddingBottom)
 
         val count = childCount
