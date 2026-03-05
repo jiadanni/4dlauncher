@@ -48,8 +48,8 @@ class AppItemView @JvmOverloads constructor(
     private var notificationCount = 0
 
     init {
-        labelHeight = Tool.dp2px(14)
-        textPaint.textSize = Tool.sp2px(12)
+        labelHeight = Tool.dp2px(14).toFloat()
+        textPaint.textSize = Tool.sp2px(12f).toFloat()
         textPaint.color = Color.WHITE
         notifyTextPaint.color = Color.WHITE
         notifyPaint.color = Color.RED
@@ -174,7 +174,7 @@ class AppItemView @JvmOverloads constructor(
                 Tool.createScaleInScaleOutAnim(view) {
                     Tool.startApp(
                         view.context,
-                        AppManager.getInstance(view.context).findApp(item._intent),
+                        AppManager.getInstance(view.context).findApp(item._intent)!!,
                         view
                     )
                 }
@@ -197,7 +197,7 @@ class AppItemView @JvmOverloads constructor(
                     /* new style shortcut */
                     else {
                         val launcherApps = view.context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
-                        val packageName = intent.getPackage()
+                        val packageName = intent.getPackage()!!
                         launcherApps.startShortcut(packageName, id, intent.sourceBounds, null, Process.myUserHandle())
                     }
                 }
@@ -240,7 +240,7 @@ class AppItemView @JvmOverloads constructor(
         }
 
         fun setIconSize(iconSize: Int): Builder {
-            view.iconSize = Tool.dp2px(iconSize)
+            view.iconSize = Tool.dp2px(iconSize).toFloat()
             return this
         }
 

@@ -186,11 +186,11 @@ open class ContextUtils(protected var _context: Context?) {
             val manager = _context!!.packageManager
             try {
                 val info = manager.getPackageInfo(packageIdManifest, 0)
-                return info.versionName
+                return info.versionName ?: ""
             } catch (e: PackageManager.NameNotFoundException) {
                 try {
                     val info = manager.getPackageInfo(packageIdReal, 0)
-                    return info.versionName
+                    return info.versionName ?: ""
                 } catch (ignored: PackageManager.NameNotFoundException) {
                 }
             }
@@ -440,7 +440,7 @@ open class ContextUtils(protected var _context: Context?) {
                     prepend, SimpleMarkdownParser.FILTER_ANDROID_TEXTVIEW
                 )
                 .replaceColor("#000001", rcolor(getResId(ResType.COLOR, "accent")))
-                .removeMultiNewlines().replaceBulletCharacter("*").html
+                .removeMultiNewlines().replaceBulletCharacter("*").html ?: ""
         } catch (e: IOException) {
             e.printStackTrace()
             return ""
@@ -555,7 +555,7 @@ open class ContextUtils(protected var _context: Context?) {
             var filesDir: File
             try {
                 filesDir = File(
-                    File(_context!!.packageManager.getPackageInfo(packageIdReal, 0).applicationInfo.dataDir),
+                    File(_context!!.packageManager.getPackageInfo(packageIdReal, 0).applicationInfo?.dataDir ?: ""),
                     "files"
                 )
             } catch (e: PackageManager.NameNotFoundException) {
@@ -776,7 +776,7 @@ open class ContextUtils(protected var _context: Context?) {
         val scale = resources.displayMetrics.density
         var bitmap = drawableToBitmap(drawableRes)
 
-        bitmap = bitmap!!.copy(bitmap.config, true)
+        bitmap = bitmap!!.copy((bitmap.config ?: android.graphics.Bitmap.Config.ARGB_8888), true)
         val canvas = Canvas(bitmap)
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
         paint.color = Color.rgb(61, 61, 61)
@@ -801,7 +801,7 @@ open class ContextUtils(protected var _context: Context?) {
             try {
                 tintDrawable(item.icon, iconColor)
                 if (item.hasSubMenu() && recurse) {
-                    tintMenuItems(item.subMenu, recurse, iconColor)
+                    tintMenuItems(item.subMenu!!, recurse, iconColor)
                 }
             } catch (ignored: Exception) {
                 // This should not happen at all, but may in bad menu.xml configuration
@@ -1045,7 +1045,7 @@ open class ContextUtils(protected var _context: Context?) {
             ): CharSequence? {
                 if (src.isEmpty()) return null
                 val last = src[src.length - 1]
-                val illegal = "|\?*<\":>[]/'"
+                val illegal = "|?*<\":>[]/'"
                 return if (illegal.indexOf(last) > -1) src.subSequence(0, src.length - 1) else null
             }
         }

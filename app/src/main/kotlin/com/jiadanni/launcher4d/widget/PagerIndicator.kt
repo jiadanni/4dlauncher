@@ -38,14 +38,14 @@ class PagerIndicator @JvmOverloads constructor(
 
     init {
         setWillNotDraw(false)
-        pad = Tool.dp2px(4)
+        pad = Tool.dp2px(4).toFloat()
         paint.color = Color.WHITE
-        paint.strokeWidth = Tool.dp2px(4)
+        paint.strokeWidth = Tool.dp2px(4).toFloat()
         paint.isAntiAlias = true
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        dotSize = (height / 2).toFloat()
+        dotSize = (height / 2f)
         super.onLayout(changed, left, top, right, bottom)
     }
 
@@ -76,9 +76,9 @@ class PagerIndicator @JvmOverloads constructor(
                             }
                             shrinkFactor = Tool.clampFloat(shrinkFactor + stepFactor, smallFactor, largeFactor)
                             canvas.drawCircle(
-                                dotSize / 2 + pad + (dotSize + pad * 2) * dot,
-                                (height / 2).toFloat(),
-                                shrinkFactor * dotSize / 2,
+                                dotSize / 2f + pad + (dotSize + pad * 2) * dot,
+                                (height / 2f),
+                                shrinkFactor * dotSize / 2f,
                                 paint
                             )
                             if (shrinkFactor != largeFactor) {
@@ -89,9 +89,9 @@ class PagerIndicator @JvmOverloads constructor(
                             // draw expanding dot
                             expandFactor = Tool.clampFloat(expandFactor - stepFactor, smallFactor, largeFactor)
                             canvas.drawCircle(
-                                dotSize / 2 + pad + (dotSize + pad * 2) * dot,
-                                (height / 2).toFloat(),
-                                expandFactor * dotSize / 2,
+                                dotSize / 2f + pad + (dotSize + pad * 2) * dot,
+                                (height / 2f),
+                                expandFactor * dotSize / 2f,
                                 paint
                             )
                             if (expandFactor != smallFactor) {
@@ -104,9 +104,9 @@ class PagerIndicator @JvmOverloads constructor(
                         else -> {
                             // draw normal dot
                             canvas.drawCircle(
-                                dotSize / 2 + pad + (dotSize + pad * 2) * dot,
-                                (height / 2).toFloat(),
-                                dotSize / 2,
+                                dotSize / 2f + pad + (dotSize + pad * 2) * dot,
+                                (height / 2f),
+                                dotSize / 2f,
                                 paint
                             )
                         }
@@ -114,9 +114,9 @@ class PagerIndicator @JvmOverloads constructor(
                 }
             }
             Mode.LINES -> {
-                val width = (getWidth() / pageCount).toFloat()
+                val width = (getWidth() / pageCount.toFloat())
                 val startX = (scrollPosition + scrollOffset) * width
-                val startY = (height / 2).toFloat()
+                val startY = (height / 2f)
 
                 canvas.drawLine(startX, startY, startX + width, startY, paint)
                 if (scrollOffset != 0f) invalidate()

@@ -470,7 +470,7 @@ class ShareUtil(protected var _context: Context?) {
     fun extractFileFromIntent(receivingIntent: Intent): File? {
         val action = receivingIntent.action
         var tmps: String
-        var fileStr: String?
+        var fileStr: String? = null
 
         if (Intent.ACTION_VIEW == action || Intent.ACTION_EDIT == action || Intent.ACTION_SEND == action) {
             // Markor, S.M.T FileManager
@@ -637,7 +637,7 @@ class ShareUtil(protected var _context: Context?) {
         var cameraPictureFilepath: String? = null
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (takePictureIntent.resolveActivity(_context!!.packageManager) != null) {
-            val photoFile: File
+            var photoFile: File
             try {
                 // Create an image file name
                 if (target != null && !target.isDirectory) {
@@ -647,7 +647,7 @@ class ShareUtil(protected var _context: Context?) {
                     val storageDir = 
                         target ?: File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "Camera")
                     val imageFileName =
-                        (ContextUtils(_context).rstr("app_name").replace("[^a-zA-Z0-9\.\-]".toRegex(), "_") + "_")
+                        (ContextUtils(_context).rstr("app_name")?.replace("[^a-zA-Z0-9\\.\\-]".toRegex(), "_") + "_")
                             .replace("__", "_") + sdf.format(Date())
                     photoFile = File(storageDir, "$imageFileName.jpg")
                     if (!photoFile.parentFile.exists() && !photoFile.parentFile.mkdirs()) {
@@ -752,7 +752,7 @@ class ShareUtil(protected var _context: Context?) {
             REQUEST_SAF -> {
                 if (resultCode == Activity.RESULT_OK && data != null && data.data != null) {
                     val treeUri = data.data
-                    PreferenceManager.getDefaultSharedPreferences(_context).edit()
+                    PreferenceManager.getDefaultSharedPreferences(_context!!).edit()
                         .putString(PREF_KEY__SAF_TREE_URI, treeUri.toString()).commit()
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                         activity.contentResolver.takePersistableUriPermission(
@@ -945,7 +945,7 @@ class ShareUtil(protected var _context: Context?) {
      */
     val storageAccessFrameworkTreeUri: Uri?
         get() {
-            val treeStr = PreferenceManager.getDefaultSharedPreferences(_context).getString(PREF_KEY__SAF_TREE_URI, null)
+            val treeStr = PreferenceManager.getDefaultSharedPreferences(_context!!).getString(PREF_KEY__SAF_TREE_URI, null)
             if (!TextUtils.isEmpty(treeStr)) {
                 try {
                     return Uri.parse(treeStr)
@@ -1081,7 +1081,7 @@ class ShareUtil(protected var _context: Context?) {
         if (originalDirectory) {
             return dof
         }
-        val parts = relPath!!.split("\/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val parts = relPath!!.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         for (i in parts.indices) {
             var nextDof = dof!!.findFile(parts[i])
             if (nextDof == null) {
@@ -1126,7 +1126,7 @@ class ShareUtil(protected var _context: Context?) {
     fun writeFile(
         file: File,
         isDirectory: Boolean,
-        writeFileCallback: Callback.a2<Boolean, FileOutputStream>?
+        writeFileCallback: Callback.a2<Boolean, FileOutputStream?>?
     ) {
         try {
             var fileOutputStream: FileOutputStream? = null
@@ -1239,7 +1239,7 @@ class ShareUtil(protected var _context: Context?) {
                 (((if (A0prefixA1postfixA2ext.isNotEmpty() && !TextUtils.isEmpty(A0prefixA1postfixA2ext[0])) A0prefixA1postfixA2ext[0] else "Screenshot") + "_").trim { it <= ' ' }
                     .replaceFirst("^_$".toRegex(), ""))
             val postfix =
-                ("_") + (if (A0prefixA1postfixA2ext.size > 1 && !TextUtils.isEmpty(A0prefixA1postfixA2ext[1])) A0prefixA1postfixA2ext[1] else "")).trim { it <= ' ' }
+                ("_" + (if (A0prefixA1postfixA2ext.size > 1 && !TextUtils.isEmpty(A0prefixA1postfixA2ext[1])) A0prefixA1postfixA2ext[1] else "")).trim { it <= ' ' }
                     .replaceFirst("^_$".toRegex(), "")
             val ext =
                 if (A0prefixA1postfixA2ext.size > 2 && !TextUtils.isEmpty(A0prefixA1postfixA2ext[2])) A0prefixA1postfixA2ext[2] else "jpg"

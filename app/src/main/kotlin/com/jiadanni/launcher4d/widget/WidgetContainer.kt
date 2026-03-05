@@ -16,10 +16,10 @@ import kotlin.math.min
 
 class WidgetContainer(context: Context, widgetView: WidgetView, private val item: Item) : FrameLayout(context) {
 
-    private val ve: View
-    private val he: View
-    private val vl: View
-    private val hl: View
+    private lateinit var ve: View
+    private lateinit var he: View
+    private lateinit var vl: View
+    private lateinit var hl: View
 
     private val action = Runnable {
         ve.animate().scaleY(0f).scaleX(0f)
@@ -93,8 +93,8 @@ class WidgetContainer(context: Context, widgetView: WidgetView, private val item
 
         if (!currentPage.checkOccupied(Point(item.x, item.y), item.spanX, item.spanY)) {
             val newWidgetLayoutParams = CellContainer.LayoutParams(
-                CellContainer.LayoutParams.WRAP_CONTENT,
-                CellContainer.LayoutParams.WRAP_CONTENT,
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
                 item.x,
                 item.y,
                 item.spanX,

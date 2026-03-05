@@ -9,8 +9,8 @@ import com.mikepenz.fastadapter.IClickable
 import com.mikepenz.fastadapter.IItem
 import com.mikepenz.fastadapter.items.AbstractItem
 
-abstract class AbstractPopupIconLabelItem<Item> : AbstractItem<AbstractPopupIconLabelItem.ViewHolder>()
-        where Item : IItem<*>, Item : IClickable<*> {
+abstract class AbstractPopupIconLabelItem : AbstractItem<AbstractPopupIconLabelItem.ViewHolder>()
+         {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val iconView: ImageView = itemView.findViewById(R.id.item_popup_icon)

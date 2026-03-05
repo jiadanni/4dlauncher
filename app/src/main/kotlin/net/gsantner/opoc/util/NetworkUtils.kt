@@ -41,7 +41,7 @@ object NetworkUtils {
 
     fun downloadFile(url: String, out: File, progressCallback: Callback.a1<Float>?): Boolean {
         return try {
-            downloadFile(URL(url), out, progressCallback)
+            downloadFile(URL(url), out, null, progressCallback)
         } catch (e: MalformedURLException) {
             // Won't happen
             e.printStackTrace()
@@ -165,7 +165,7 @@ object NetworkUtils {
             val input =
                 if (connection.responseCode < HttpURLConnection.HTTP_BAD_REQUEST) connection.inputStream else connection.errorStream
 
-            return FileUtils.readCloseTextStream(connection.inputStream)
+            return FileUtils.readCloseTextStream(connection.inputStream).joinToString("\n")
         } catch (e: Exception) {
             e.printStackTrace()
         }

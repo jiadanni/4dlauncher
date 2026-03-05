@@ -8,7 +8,7 @@ import android.view.WindowInsets
 
 class NavigationView(context: Context, attr: AttributeSet) : View(context, attr) {
 
-    fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         // scale the view to pad the home layout for the missing status and navigation bars
         // TODO move home layout to class so this can be done within the view itself
     }
