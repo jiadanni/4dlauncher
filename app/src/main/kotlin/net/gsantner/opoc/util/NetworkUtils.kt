@@ -24,7 +24,7 @@ import java.net.URLEncoder
 import java.nio.charset.Charset
 import java.util.HashMap
 
-@Suppress("WeakerAccess", "unused", "SameParameterValue", "SpellCheckingInspection", "deprecation")
+@Suppress("WeakerAccess", "unused", "SameParameterValue", "SpellCheckingInspection")
 object NetworkUtils {
     private const val UTF8 = "UTF-8"
     const val GET = "GET"

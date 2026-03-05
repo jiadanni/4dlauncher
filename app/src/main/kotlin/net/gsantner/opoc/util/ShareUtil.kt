@@ -73,7 +73,6 @@ import java.util.Random
     "WeakerAccess",
     "SameParameterValue",
     "unused",
-    "deprecation",
     "ConstantConditions",
     "ObsoleteSdkInt",
     "SpellCheckingInspection",

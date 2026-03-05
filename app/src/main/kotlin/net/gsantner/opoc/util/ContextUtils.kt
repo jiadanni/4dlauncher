@@ -85,7 +85,6 @@ import java.util.Locale
     "unused",
     "SameParameterValue",
     "ObsoleteSdkInt",
-    "deprecation",
     "SpellCheckingInspection",
     "TryFinallyCanBeTryWithResources",
     "UnusedAssignment",
@@ -378,8 +377,20 @@ open class ContextUtils(protected var _context: Context?) {
         get() {
             try {
                 val con = _context!!.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-                @SuppressLint("MissingPermission") val activeNetInfo = con.activeNetworkInfo
-                return activeNetInfo != null && activeNetInfo.isConnectedOrConnecting
+                if (ContextCompat.checkSelfPermission(_context!!, android.Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        val network = con.activeNetwork ?: return false
+                        val capabilities = con.getNetworkCapabilities(network) ?: return false
+                        return capabilities.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+                               capabilities.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+                    } else {
+                        @Suppress("DEPRECATION")
+                        val activeNetInfo = con.activeNetworkInfo
+                        return activeNetInfo != null && activeNetInfo.isConnectedOrConnecting
+                    }
+                } else {
+                    return false
+                }
             } catch (ignored: Exception) {
                 throw RuntimeException("Error: Developer forgot to declare a permission")
             }
@@ -827,13 +838,15 @@ open class ContextUtils(protected var _context: Context?) {
         }
         if (menu.javaClass.simpleName == "MenuBuilder") {
             try {
-                @SuppressLint("PrivateApi") val m = 
-                    menu.javaClass.getDeclaredMethod("setOptionalIconsVisible", Boolean::class.javaPrimitiveType)
+                val m = menu.javaClass.getDeclaredMethod("setOptionalIconsVisible", Boolean::class.javaPrimitiveType)
                 m.isAccessible = true
                 m.invoke(menu, visible)
             } catch (ignored: Exception) {
                 Log.d(javaClass.name, "Error: 'setSubMenuIconsVisiblity' not supported on this device")
             }
+        } else {
+            // Note: Modern alternatives involve applying app:iconTint or custom item layouts
+            // MenuBuilder reflection is still sometimes used due to a lack of simple public API for this specific visual change across all versions without migrating menu to support library features, but should be avoided if possible.
         }
     }
 
@@ -945,16 +958,18 @@ open class ContextUtils(protected var _context: Context?) {
 
     // Vibrate device one time by given amount of time, defaulting to 50ms
     // Requires <uses-permission android:name="android.permission.VIBRATE" /> in AndroidManifest to work
-    @SuppressLint("MissingPermission")
     fun vibrate(vararg ms: Int) {
-        val ms_v = if (ms.isNotEmpty()) ms[0] else 50
-        val vibrator = _context!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator?
-        if (vibrator == null) {
-            return
-        } else if (Build.VERSION.SDK_INT >= 26) {
-            vibrator.vibrate(VibrationEffect.createOneShot(ms_v.toLong(), VibrationEffect.DEFAULT_AMPLITUDE))
-        } else {
-            vibrator.vibrate(ms_v.toLong())
+        if (ContextCompat.checkSelfPermission(_context!!, android.Manifest.permission.VIBRATE) == PackageManager.PERMISSION_GRANTED) {
+            val ms_v = if (ms.isNotEmpty()) ms[0] else 50
+            val vibrator = _context!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator?
+            if (vibrator == null) {
+                return
+            } else if (Build.VERSION.SDK_INT >= 26) {
+                vibrator.vibrate(VibrationEffect.createOneShot(ms_v.toLong(), VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                @Suppress("DEPRECATION")
+                vibrator.vibrate(ms_v.toLong())
+            }
         }
     }
 
@@ -963,13 +978,22 @@ open class ContextUtils(protected var _context: Context?) {
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
      */
-    @SuppressLint("MissingPermission")
     fun isWifiConnected(vararg enabledOnly: Boolean): Boolean {
-        val doEnabledCheckOnly = enabledOnly.isNotEmpty() && enabledOnly[0]
-        val connectivityManager = 
-            _context!!.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val wifiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
-        return wifiInfo != null && if (doEnabledCheckOnly) wifiInfo.isAvailable else wifiInfo.isConnected
+        if (ContextCompat.checkSelfPermission(_context!!, android.Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED) {
+            val connectivityManager =
+                _context!!.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val network = connectivityManager.activeNetwork ?: return false
+                val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+                return capabilities.hasTransport(android.net.NetworkCapabilities.TRANSPORT_WIFI)
+            } else {
+                val doEnabledCheckOnly = enabledOnly.isNotEmpty() && enabledOnly[0]
+                @Suppress("DEPRECATION")
+                val wifiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+                return wifiInfo != null && if (doEnabledCheckOnly) wifiInfo.isAvailable else wifiInfo.isConnected
+            }
+        }
+        return false
     }
 
     // Returns if the device is currently in portrait orientation (landscape=false)

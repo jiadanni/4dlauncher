@@ -35,7 +35,7 @@ import java.util.UUID
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.regex.Pattern
 
-@Suppress("WeakerAccess", "unused", "SameParameterValue", "SpellCheckingInspection", "deprecation", "TryFinallyCanBeTryWithResources")
+@Suppress("WeakerAccess", "unused", "SameParameterValue", "SpellCheckingInspection", "TryFinallyCanBeTryWithResources")
 object FileUtils {
     // Used on methods like copyFile(src, dst)
     private const val BUFFER_SIZE = 4096
