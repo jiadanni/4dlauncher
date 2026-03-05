@@ -476,7 +476,8 @@ class ShareUtil(protected var _context: Context?) {
         if (Intent.ACTION_VIEW == action || Intent.ACTION_EDIT == action || Intent.ACTION_SEND == action) {
             // Markor, S.M.T FileManager
             if (receivingIntent.hasExtra(EXTRA_FILEPATH.also { tmps = it })) {
-                return File(receivingIntent.getStringExtra(tmps)!!)
+                val extraPath = receivingIntent.getStringExtra(tmps)
+                if (extraPath != null) return File(extraPath) else return null
             }
 
             // Analyze data/Uri
@@ -584,11 +585,12 @@ class ShareUtil(protected var _context: Context?) {
             var tmpf: File? = null
             var f: File? = null
             try {
-                f = File(Uri.decode(receivingIntent.getStringExtra(EXTRA_FILEPATH)))
+                val extraFilePath = receivingIntent.getStringExtra(EXTRA_FILEPATH)
+                if (extraFilePath != null) f = File(Uri.decode(extraFilePath))
             } catch (e: Exception) { /* ignore */ }
             if (f != null && f.exists()) {
                 return f
-            } else if (File(receivingIntent.getStringExtra(EXTRA_FILEPATH)!!).also { tmpf = it }.exists()) {
+            } else if (receivingIntent.getStringExtra(EXTRA_FILEPATH)?.let { File(it) }?.also { tmpf = it }?.exists() == true) {
                 return tmpf
             }
         }

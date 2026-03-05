@@ -39,7 +39,9 @@ class DatabaseHelper(val context: Context) : SQLiteOpenHelper(context, DATABASE_
     }
 
     fun createItem(item: Item, page: Int, itemPosition: ItemPosition) {
-        Log.i(this::class.java.name, "createItem: ${item.label} (ID: ${item.id})")
+        if (com.jiadanni.launcher4d.BuildConfig.DEBUG) {
+            Log.i(this::class.java.name, "createItem: ${item.label} (ID: ${item.id})")
+        }
         val itemValues = ContentValues().apply {
             put(COLUMN_TIME, item.id)
             put(COLUMN_TYPE, item.type.toString())
@@ -181,7 +183,9 @@ class DatabaseHelper(val context: Context) : SQLiteOpenHelper(context, DATABASE_
 
     // update data attribute for an item
     fun updateItem(item: Item) {
-        Log.i(this::class.java.name, "updateItem: ${item.label} ${item.id}")
+        if (com.jiadanni.launcher4d.BuildConfig.DEBUG) {
+            Log.i(this::class.java.name, "updateItem: ${item.label} ${item.id}")
+        }
 
         val itemValues = ContentValues().apply {
             put(COLUMN_LABEL, item.label)
@@ -212,7 +216,9 @@ class DatabaseHelper(val context: Context) : SQLiteOpenHelper(context, DATABASE_
 
     // update the state of an item
     fun updateItem(item: Item, state: ItemState) {
-        Log.i(this::class.java.name, "updateItem: ${item.label} ${item.id}")
+        if (com.jiadanni.launcher4d.BuildConfig.DEBUG) {
+            Log.i(this::class.java.name, "updateItem: ${item.label} ${item.id}")
+        }
 
         val itemValues = ContentValues().apply {
             put(COLUMN_STATE, state.ordinal)
@@ -223,7 +229,9 @@ class DatabaseHelper(val context: Context) : SQLiteOpenHelper(context, DATABASE_
 
     // update the fields only used by the database
     fun updateItem(item: Item, page: Int, itemPosition: ItemPosition) {
-        Log.i(this::class.java.name, "updateItem: ${item.label} ${item.id}")
+        if (com.jiadanni.launcher4d.BuildConfig.DEBUG) {
+            Log.i(this::class.java.name, "updateItem: ${item.label} ${item.id}")
+        }
 
         deleteItem(item, false)
         createItem(item, page, itemPosition)
