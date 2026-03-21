@@ -144,11 +144,6 @@ open class CellContainer @JvmOverloads constructor(
         _cellSpanH = x
 
         occupied = Array(cellSpanH) { BooleanArray(cellSpanV) }
-        for (i in 0 until cellSpanH) {
-            for (j in 0 until cellSpanV) {
-                occupied!![i][j] = false
-            }
-        }
 
         requestLayout()
     }
