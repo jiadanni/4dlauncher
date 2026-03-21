@@ -414,7 +414,11 @@ open class ContextUtils(protected var _context: Context?) {
      */
     fun restartApp(classToStart: Class<*>) {
         val intent = Intent(_context, classToStart)
-        val pendi = PendingIntent.getActivity(_context, 555, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+        var flags = PendingIntent.FLAG_CANCEL_CURRENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            flags = flags or PendingIntent.FLAG_IMMUTABLE
+        }
+        val pendi = PendingIntent.getActivity(_context, 555, intent, flags)
         val mgr = _context!!.getSystemService(Context.ALARM_SERVICE) as AlarmManager?
         if (_context is Activity) {
             (_context as Activity).finish()
