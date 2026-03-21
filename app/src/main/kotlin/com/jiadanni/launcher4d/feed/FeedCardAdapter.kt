@@ -132,12 +132,12 @@ class FeedCardAdapter(private val context: Context) : RecyclerView.Adapter<FeedC
         private val timeText: TextView = itemView.findViewById(R.id.calendar_time)
         private val locationText: TextView = itemView.findViewById(R.id.calendar_location)
         private val colorIndicator: View = itemView.findViewById(R.id.calendar_color_indicator)
-        private val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
 
         override fun bind(card: FeedCard) {
             if (card is FeedCard.CalendarEventCard) {
                 titleText.text = card.title
 
+                val timeFormat = android.text.format.DateFormat.getTimeFormat(itemView.context)
                 val startDate = Date(card.startTime)
                 val endDate = Date(card.endTime)
                 timeText.text = if (card.allDay) {
@@ -184,13 +184,13 @@ class FeedCardAdapter(private val context: Context) : RecyclerView.Adapter<FeedC
         private val timeText: TextView = itemView.findViewById(R.id.flight_time)
         private val statusText: TextView = itemView.findViewById(R.id.flight_status)
         private val gateText: TextView = itemView.findViewById(R.id.flight_gate)
-        private val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
 
         override fun bind(card: FeedCard) {
             if (card is FeedCard.FlightInfoCard) {
                 flightNumberText.text = "${card.airline} ${card.flightNumber}"
                 routeText.text = "${card.departure} → ${card.arrival}"
 
+                val timeFormat = android.text.format.DateFormat.getTimeFormat(itemView.context)
                 val departDate = Date(card.departureTime)
                 timeText.text = "Departs ${timeFormat.format(departDate)}"
 
@@ -243,7 +243,8 @@ class FeedCardAdapter(private val context: Context) : RecyclerView.Adapter<FeedC
                 } ?: run {
                     descriptionText.visibility = View.GONE
                 }
-                // TODO: Format time
+                val timeFormat = android.text.format.DateFormat.getTimeFormat(itemView.context)
+                timeText.text = timeFormat.format(Date(card.dueTime))
             }
         }
     }
