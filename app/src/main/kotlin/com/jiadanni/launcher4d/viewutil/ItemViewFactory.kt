@@ -134,18 +134,7 @@ object ItemViewFactory {
 
         val widgetContainer = WidgetContainer(context, widgetView, item)
 
-        // TODO move this to standard DragHandler.getLongClick() method
-        // needs to be set on widgetView but use widgetContainer inside
-        widgetView.setOnLongClickListener { view ->
-            if (Setup.appSettings().desktopLock) {
-                return@setOnLongClickListener false
-            }
-            if (Setup.appSettings().gestureFeedback) {
-                Tool.vibrate(view)
-            }
-            DragHandler.startDrag(widgetContainer, item, DragAction.Action.DESKTOP, callback)
-            true
-        }
+        widgetView.setOnLongClickListener(DragHandler.getLongClick(item, DragAction.Action.DESKTOP, callback, widgetContainer))
 
         widgetView.post {
             widgetContainer.updateWidgetOption(item)
