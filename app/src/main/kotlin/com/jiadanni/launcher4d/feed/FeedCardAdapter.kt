@@ -122,7 +122,20 @@ class FeedCardAdapter(private val context: Context) : RecyclerView.Adapter<FeedC
                 temperatureText.text = "${card.temperature}°"
                 conditionText.text = card.condition
                 highLowText.text = "H: ${card.highTemp}° L: ${card.lowTemp}°"
-                // TODO: Set weather icon based on iconCode
+
+                val iconRes = when (card.iconCode) {
+                    "01d" -> R.drawable.ic_weather_clear_day
+                    "01n" -> R.drawable.ic_weather_clear_night
+                    "02d" -> R.drawable.ic_weather_clouds_day
+                    "02n" -> R.drawable.ic_weather_clouds_night
+                    "03d", "03n", "04d", "04n" -> R.drawable.ic_weather_clouds
+                    "09d", "09n", "10d", "10n" -> R.drawable.ic_weather_rain
+                    "11d", "11n" -> R.drawable.ic_weather_storm
+                    "13d", "13n" -> R.drawable.ic_weather_snow
+                    "50d", "50n" -> R.drawable.ic_weather_mist
+                    else -> R.drawable.ic_weather_clouds
+                }
+                weatherIcon.setImageResource(iconRes)
             }
         }
     }
