@@ -2,8 +2,6 @@ package com.jiadanni.launcher4d.widget
 
 import android.content.Context
 import android.content.res.Configuration
-import android.graphics.Color
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.GridLayoutManager
@@ -12,9 +10,6 @@ import com.jiadanni.launcher4d.R
 import com.jiadanni.launcher4d.interfaces.AppUpdateListener
 import com.jiadanni.launcher4d.manager.Setup
 import com.jiadanni.launcher4d.model.App
-import com.jiadanni.launcher4d.model.Item
-import com.jiadanni.launcher4d.util.DragAction
-import com.jiadanni.launcher4d.util.DragHandler
 import com.jiadanni.launcher4d.util.Tool
 import com.jiadanni.launcher4d.viewutil.IconLabelItem
 import com.mikepenz.fastadapter.FastAdapter
@@ -83,21 +78,7 @@ class AppDrawerGrid(context: Context) : FrameLayout(context) {
         _apps = apps
         val items = ArrayList<IconLabelItem>()
         for (app in apps) {
-            items.add(
-                IconLabelItem(app.icon, app.label)
-                    .withIconSize(Setup.appSettings().iconSize)
-                    .withTextColor(Color.WHITE)
-                    .withTextVisibility(Setup.appSettings().drawerShowLabel)
-                    .withIconPadding(8)
-                    .withTextGravity(Gravity.CENTER)
-                    .withIconGravity(Gravity.TOP)
-                    .withOnClickAnimate(false)
-                    .withIsAppLauncher(true)
-                    .withOnClickListener { v ->
-                        Tool.startApp(v.context, app, null)
-                    }
-                    .withOnLongClickListener(DragHandler.getLongClick(Item.newAppItem(app), DragAction.Action.DRAWER, null))
-            )
+            items.add(IconLabelItem(app))
         }
         gridDrawerAdapter.itemAdapter.set(items)
     }

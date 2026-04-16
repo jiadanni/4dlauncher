@@ -22,7 +22,8 @@ object DragHandler {
     }
 
     @JvmStatic
-    fun getLongClick(item: Item, action: DragAction.Action, desktopCallback: DesktopCallback?): View.OnLongClickListener {
+    @JvmOverloads
+    fun getLongClick(item: Item, action: DragAction.Action, desktopCallback: DesktopCallback?, dragView: View? = null): View.OnLongClickListener {
         return View.OnLongClickListener { view ->
             if (Setup.appSettings().desktopLock) {
                 val launcher = Tool.getLauncher(view.context)
@@ -38,7 +39,7 @@ object DragHandler {
             if (Setup.appSettings().gestureFeedback) {
                 Tool.vibrate(view)
             }
-            startDrag(view, item, action, desktopCallback)
+            startDrag(dragView ?: view, item, action, desktopCallback)
             true
         }
     }
