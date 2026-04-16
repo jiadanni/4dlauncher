@@ -5,6 +5,8 @@ import android.location.Location
 import android.location.LocationManager
 import com.jiadanni.launcher4d.feed.FeedCard
 import com.jiadanni.launcher4d.util.AppSettings
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.net.URL
 
@@ -51,7 +53,9 @@ class WeatherProvider(private val context: Context) {
     private suspend fun fetchWeatherData(lat: Double, lon: Double): FeedCard.WeatherCard? {
         return try {
             val url = "$baseUrl?lat=$lat&lon=$lon&appid=$apiKey&units=metric"
-            val response = URL(url).readText()
+            val response = withContext(Dispatchers.IO) {
+                URL(url).readText()
+            }
             parseWeatherResponse(response)
         } catch (e: Exception) {
             e.printStackTrace()
