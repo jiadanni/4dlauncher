@@ -48,8 +48,7 @@ object CryptoUtils {
 
             return Base64.encodeToString(ivAndEncrypted, Base64.DEFAULT)
         } catch (e: Exception) {
-            e.printStackTrace()
-            return plaintext
+            return ""
         }
     }
 
@@ -57,7 +56,7 @@ object CryptoUtils {
         if (encryptedText.isNullOrEmpty()) return ""
         try {
             val ivAndEncrypted = Base64.decode(encryptedText, Base64.DEFAULT)
-            if (ivAndEncrypted.size < 12) return encryptedText // Probably not encrypted
+            if (ivAndEncrypted.size < 12) return "" // Probably not encrypted or corrupted
 
             val cipher = Cipher.getInstance(TRANSFORMATION)
             val iv = ByteArray(12)
@@ -71,8 +70,7 @@ object CryptoUtils {
             val decryptedBytes = cipher.doFinal(encryptedBytes)
             return String(decryptedBytes, Charsets.UTF_8)
         } catch (e: Exception) {
-            e.printStackTrace()
-            return encryptedText
+            return ""
         }
     }
 }
