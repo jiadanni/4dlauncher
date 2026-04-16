@@ -12,7 +12,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.jiadanni.launcher4d.R
 import com.jiadanni.launcher4d.manager.Setup
+import com.jiadanni.launcher4d.model.App
+import com.jiadanni.launcher4d.model.Item
+import com.jiadanni.launcher4d.util.DragAction
+import com.jiadanni.launcher4d.util.DragHandler
 import com.jiadanni.launcher4d.util.Tool
+import com.jiadanni.launcher4d.widget.AppDrawerGrid
+import com.jiadanni.launcher4d.widget.AppItemView
 import com.mikepenz.fastadapter.items.AbstractItem
 
 class IconLabelItem : AbstractItem<IconLabelItem.ViewHolder> {
@@ -43,6 +49,24 @@ class IconLabelItem : AbstractItem<IconLabelItem.ViewHolder> {
     constructor(icon: Drawable?, label: String?) {
         this.label = label
         this.icon = icon
+    }
+
+    constructor(app: App) {
+        this.label = app.label
+        this.icon = app.icon
+        withWidth(AppDrawerGrid._itemWidth)
+        withIconSize(Setup.appSettings().iconSize)
+        withTextVisibility(Setup.appSettings().drawerShowLabel)
+        withTextColor(Setup.appSettings().drawerLabelColor)
+        withIconPadding(8)
+        withTextGravity(Gravity.CENTER)
+        withIconGravity(Gravity.TOP)
+        withOnClickAnimate(false)
+        withIsAppLauncher(true)
+        withOnClickListener { v ->
+            Tool.startApp(v.context, app, null)
+        }
+        withOnLongClickListener(DragHandler.getLongClick(Item.newAppItem(app), DragAction.Action.DRAWER, null))
     }
 
     fun withWidth(width: Int): IconLabelItem {
@@ -140,62 +164,76 @@ class IconLabelItem : AbstractItem<IconLabelItem.ViewHolder> {
             height
         }
 
-        // Only run all this code if a label should be shown
-        if (label != null && textVisibility) {
-            holder.textView.text = label
-            holder.textView.gravity = textGravity
-            holder.textView.maxLines = 1
-            holder.textView.ellipsize = TextUtils.TruncateAt.END
-            // No default text color since it will be set by the theme
-            if (textColor != Int.MAX_VALUE) {
-                holder.textView.setTextColor(textColor)
+        if (holder.itemView is AppItemView) {
+            val appItemView = holder.itemView as AppItemView
+            appItemView.iconSize = iconSize.toFloat()
+            appItemView.showLabel = textVisibility
+            appItemView.label = label
+            appItemView.icon = icon
+            appItemView.gravity = textGravity
+            appItemView.setTextColor(if (textColor != Int.MAX_VALUE) textColor else appItemView.textColors.defaultColor)
+        } else {
+            val textView = holder.itemView as TextView
+            // Only run all this code if a label should be shown
+            if (label != null && textVisibility) {
+                textView.text = label
+                textView.gravity = textGravity
+                textView.maxLines = 1
+                textView.ellipsize = TextUtils.TruncateAt.END
+                // No default text color since it will be set by the theme
+                if (textColor != Int.MAX_VALUE) {
+                    textView.setTextColor(textColor)
+                }
+            } else {
+                textView.text = ""
             }
-        }
 
-        // Icon specific padding
-        holder.textView.compoundDrawablePadding = iconPadding
-        if (iconSize != Int.MAX_VALUE) {
-            val bitmap = Tool.drawableToBitmap(icon)
-            bitmap?.let {
-                icon = BitmapDrawable(
-                    Setup.appContext().resources,
-                    Bitmap.createScaledBitmap(it, iconSize, iconSize, true)
-                )
-                icon?.setColorFilter(iconColor, PorterDuff.Mode.SRC_ATOP)
-                if (isAppLauncher) {
-                    icon?.setBounds(0, 0, iconSize, iconSize)
+            // Icon specific padding
+            textView.compoundDrawablePadding = iconPadding
+            var finalIcon = icon
+            if (iconSize != Int.MAX_VALUE && finalIcon != null) {
+                val bitmap = Tool.drawableToBitmap(finalIcon)
+                bitmap?.let {
+                    finalIcon = BitmapDrawable(
+                        Setup.appContext().resources,
+                        Bitmap.createScaledBitmap(it, iconSize, iconSize, true)
+                    )
+                    finalIcon?.setColorFilter(iconColor, PorterDuff.Mode.SRC_ATOP)
+                    if (isAppLauncher) {
+                        finalIcon?.setBounds(0, 0, iconSize, iconSize)
+                    }
                 }
             }
-        }
 
-        // Set compound drawables based on gravity
-        when (iconGravity) {
-            Gravity.START -> {
-                if (isAppLauncher) {
-                    holder.textView.setCompoundDrawables(icon, null, null, null)
-                } else {
-                    holder.textView.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null)
+            // Set compound drawables based on gravity
+            when (iconGravity) {
+                Gravity.START -> {
+                    if (isAppLauncher) {
+                        textView.setCompoundDrawables(finalIcon, null, null, null)
+                    } else {
+                        textView.setCompoundDrawablesWithIntrinsicBounds(finalIcon, null, null, null)
+                    }
                 }
-            }
-            Gravity.END -> {
-                if (isAppLauncher) {
-                    holder.textView.setCompoundDrawables(null, null, icon, null)
-                } else {
-                    holder.textView.setCompoundDrawablesWithIntrinsicBounds(null, null, icon, null)
+                Gravity.END -> {
+                    if (isAppLauncher) {
+                        textView.setCompoundDrawables(null, null, finalIcon, null)
+                    } else {
+                        textView.setCompoundDrawablesWithIntrinsicBounds(null, null, finalIcon, null)
+                    }
                 }
-            }
-            Gravity.TOP -> {
-                if (isAppLauncher) {
-                    holder.textView.setCompoundDrawables(null, icon, null, null)
-                } else {
-                    holder.textView.setCompoundDrawablesWithIntrinsicBounds(null, icon, null, null)
+                Gravity.TOP -> {
+                    if (isAppLauncher) {
+                        textView.setCompoundDrawables(null, finalIcon, null, null)
+                    } else {
+                        textView.setCompoundDrawablesWithIntrinsicBounds(null, finalIcon, null, null)
+                    }
                 }
-            }
-            Gravity.BOTTOM -> {
-                if (isAppLauncher) {
-                    holder.textView.setCompoundDrawables(null, null, null, icon)
-                } else {
-                    holder.textView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, icon)
+                Gravity.BOTTOM -> {
+                    if (isAppLauncher) {
+                        textView.setCompoundDrawables(null, null, null, finalIcon)
+                    } else {
+                        textView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, finalIcon)
+                    }
                 }
             }
         }
@@ -222,10 +260,8 @@ class IconLabelItem : AbstractItem<IconLabelItem.ViewHolder> {
         set(value) { label = value }
 
     class ViewHolder(itemView: View, item: IconLabelItem) : RecyclerView.ViewHolder(itemView) {
-        val textView: TextView = itemView as TextView
-
         init {
-            textView.tag = item
+            itemView.tag = item
         }
     }
 }
