@@ -198,11 +198,9 @@ class AppManager(val context: Context) {
 
             val hiddenList = AppSettings.get().hiddenAppsList
             if (hiddenList != null) {
+                val hiddenSet = hiddenList.toHashSet()
                 for (i in nonFilteredAppsTemp.indices) {
-                    val shouldGetAway = hiddenList.any { hidItemRaw ->
-                        nonFilteredAppsTemp[i].componentName == hidItemRaw
-                    }
-                    if (!shouldGetAway) {
+                    if (!hiddenSet.contains(nonFilteredAppsTemp[i].componentName)) {
                         appsTemp.add(nonFilteredAppsTemp[i])
                     }
                 }
