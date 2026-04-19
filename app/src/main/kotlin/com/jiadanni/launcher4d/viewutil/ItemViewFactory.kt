@@ -82,7 +82,10 @@ object ItemViewFactory {
             }
         }
 
-        // TODO find out why tag is set here
+        // The tag is set here to associate the Item model with its View.
+        // This is used in several places to retrieve the Item from a View,
+        // for example in Desktop.kt when removing pages and in HpDragOption.kt
+        // for drag-and-drop operations.
         view?.tag = item
 
         return view
