@@ -107,7 +107,7 @@ class NotificationListener : NotificationListenerService() {
 
     inner class NotificationListenerReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (intent.getStringExtra(UPDATE_NOTIFICATIONS_COMMAND) == UPDATE_NOTIFICATIONS_UPDATE) {
+            if (intent.action == UPDATE_NOTIFICATIONS_ACTION && intent.getStringExtra(UPDATE_NOTIFICATIONS_COMMAND) == UPDATE_NOTIFICATIONS_UPDATE) {
                 this@NotificationListener.updateCurrentNotifications()
             }
         }
