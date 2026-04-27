@@ -82,7 +82,9 @@ object ItemViewFactory {
             }
         }
 
-        // TODO find out why tag is set here
+        // associate the View with its corresponding Item data model
+        // this association is retrieved in Desktop.kt for item deletion during page removal
+        // and in HpDragOption.kt for drag-and-drop operations (e.g., creating groups)
         view?.tag = item
 
         return view
