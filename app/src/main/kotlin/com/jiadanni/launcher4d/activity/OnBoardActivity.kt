@@ -3,71 +3,14 @@ package com.jiadanni.launcher4d.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import agency.tango.materialintroscreen.MaterialIntroActivity
-import agency.tango.materialintroscreen.SlideFragment
-import agency.tango.materialintroscreen.SlideFragmentBuilder
+import androidx.appcompat.app.AppCompatActivity
 import com.jiadanni.launcher4d.R
 
-class OnBoardActivity : MaterialIntroActivity() {
+class OnBoardActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        if (!getSharedPreferences("app", Context.MODE_PRIVATE)
-                .getBoolean(resources.getString(R.string.pref_key__show_intro), false)
-        ) {
-            skipStart()
-            return
-        }
-
-        val overScrollLayout = findViewById<agency.tango.materialintroscreen.widgets.OverScrollViewPager>(
-            agency.tango.materialintroscreen.R.id.view_pager_slides
-        )
-        val viewPager = overScrollLayout.overScrollView
-        viewPager.overScrollMode = View.OVER_SCROLL_NEVER
-
-        addSlide(CustomSlide())
-
-        addSlide(
-            SlideFragmentBuilder()
-                .backgroundColor(R.color.materialRed)
-                .buttonsColor(R.color.introButton)
-                .image(R.drawable.intro_2)
-                .title(getString(R.string.minibar))
-                .description(getString(R.string.intro2_text))
-                .build()
-        )
-
-        addSlide(
-            SlideFragmentBuilder()
-                .backgroundColor(R.color.materialGreen)
-                .buttonsColor(R.color.introButton)
-                .image(R.drawable.intro_3)
-                .title(getString(R.string.pref_title__app_drawer))
-                .description(getString(R.string.intro3_text))
-                .build()
-        )
-
-        addSlide(
-            SlideFragmentBuilder()
-                .backgroundColor(R.color.materialBlue)
-                .buttonsColor(R.color.introButton)
-                .image(R.drawable.intro_4)
-                .title(getString(R.string.pref_title__search_bar))
-                .description(getString(R.string.intro4_text))
-                .build()
-        )
-    }
-
-    override fun onFinish() {
-        super.onFinish()
-        setState()
-    }
-
-    private fun skipStart() {
+        // Skip onboarding as the library is missing/deprecated
         setState()
         finish()
     }
@@ -81,20 +24,5 @@ class OnBoardActivity : MaterialIntroActivity() {
             addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
         }
         startActivity(intent)
-    }
-
-    class CustomSlide : SlideFragment() {
-
-        override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-        ): View? {
-            return inflater.inflate(R.layout.view_intro, container, false)
-        }
-
-        override fun backgroundColor(): Int = R.color.materialBlue
-
-        override fun buttonsColor(): Int = R.color.introButton
     }
 }
