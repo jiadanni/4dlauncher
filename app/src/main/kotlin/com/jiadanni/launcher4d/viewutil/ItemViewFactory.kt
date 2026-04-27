@@ -82,7 +82,10 @@ object ItemViewFactory {
             }
         }
 
-        // TODO find out why tag is set here
+        // The tag is used to associate the UI View with its Item data model.
+        // This is required for:
+        // 1. Item deletion when a desktop page is removed (see Desktop.kt).
+        // 2. Handling drop-over actions during drag-and-drop (see HpDragOption.kt).
         view?.tag = item
 
         return view
